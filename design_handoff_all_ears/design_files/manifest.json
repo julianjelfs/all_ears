@@ -1,0 +1,17 @@
+{
+  "name": "All Ears — Relative Pitch",
+  "short_name": "All Ears",
+  "start_url": "./All Ears.dc.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f2f2",
+  "theme_color": "#ec3013",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ec3013">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="_ds/modernist-64350e32-bcf5-463d-8ea5-8618cd97f358/styles.css">
+<script src="_ds/modernist-64350e32-bcf5-463d-8ea5-8618cd97f358/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; background: #f3f2f2; -webkit-tap-highlight-color: transparent; }
+  a { color: var(--color-accent); }
+  a:hover { color: var(--color-accent-700); }
+  button { font-family: var(--font-body); }
+  button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  @keyframes et-blink { 0%, 100% { opacity: 0.25 } 50% { opacity: 1 } }
+</style>
+</helmet>
+
+<div style="min-height:100dvh;display:flex;flex-direction:column;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)">
+
+  <header style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--color-divider)">
+    <div style="width:13px;height:13px;background:var(--color-accent)"></div>
+    <div style="font-family:var(--font-heading);font-weight:800;font-size:14px;letter-spacing:0.16em;text-transform:uppercase;margin-right:auto">All Ears</div>
+    <button onClick="{{ goStats }}" style="border:0;background:transparent;cursor:pointer;color:var(--color-accent);font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;min-height:44px;padding:12px;margin-right:-12px">Stats</button>
+  </header>
+
+  <main style="flex:1;width:100%;max-width:560px;margin:0 auto;padding:var(--space-6) var(--space-4) 56px;box-sizing:border-box">
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700)">Relative pitch drills</div>
+        <h1 style="font-size:40px;margin:var(--space-2) 0 var(--space-6)">Pick a mode</h1>
+
+        <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+          <button onClick="{{ chooseMelodic }}" style="display:block;width:100%;text-align:left;border:2px solid var(--color-text);background:transparent;color:inherit;cursor:pointer;padding:var(--space-4)" style-hover="background:var(--color-accent-100);border-color:var(--color-accent)">
+            <div style="font-family:var(--font-heading);font-weight:800;font-size:27px;letter-spacing:-0.02em">Melodic</div>
+            <div style="font-size:13px;line-height:1.5;color:var(--color-neutral-700);margin-top:6px;max-width:34ch;text-wrap:pretty">Two notes one after the other. Name the interval between them.</div>
+          </button>
+          <button onClick="{{ chooseHarmonic }}" style="display:block;width:100%;text-align:left;border:2px solid var(--color-text);background:transparent;color:inherit;cursor:pointer;padding:var(--space-4)" style-hover="background:var(--color-accent-100);border-color:var(--color-accent)">
+            <div style="font-family:var(--font-heading);font-weight:800;font-size:27px;letter-spacing:-0.02em">Harmonic</div>
+            <div style="font-size:13px;line-height:1.5;color:var(--color-neutral-700);margin-top:6px;max-width:34ch;text-wrap:pretty">Notes struck together — dyads, or triads to name by quality.</div>
+          </button>
+        </div>
+
+        <sc-if value="{{ hasLast }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <hr class="hr">
+            <div style="display:flex;align-items:baseline;gap:var(--space-3)">
+              <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);flex:1">Last drill · {{ lastLabel }}</div>
+              <div style="font-family:var(--font-heading);font-weight:800;font-size:22px">{{ lastScore }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <hr class="hr">
+        <div style="font-size:12px;line-height:1.6;color:var(--color-neutral-600);text-wrap:pretty">Sampled nylon-string guitar, {{ rangeLabel }}. Roots are randomised across the range, so the same interval never lands twice in the same place.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isConfig }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <button onClick="{{ goHome }}" style="border:0;background:transparent;cursor:pointer;color:var(--color-accent);font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;min-height:44px;padding:12px 0;margin-bottom:var(--space-2)">← Modes</button>
+        <h1 style="font-size:34px;margin:0 0 var(--space-6)">{{ modeTitle }}</h1>
+
+        <sc-if value="{{ showDirection }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-bottom:var(--space-6)">
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:var(--space-2)">Direction</div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-2)">
+              <sc-for list="{{ directionOpts }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.onClick }}" style="cursor:pointer;padding:13px 10px;font-family:var(--font-heading);font-weight:800;font-size:13px;text-align:left;border:2px solid {{ o.bc }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showContent }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-bottom:var(--space-6)">
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:var(--space-2)">Test on</div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-2)">
+              <sc-for list="{{ contentOpts }}" as="o" hint-placeholder-count="2">
+                <button onClick="{{ o.onClick }}" style="cursor:pointer;padding:13px 10px;font-family:var(--font-heading);font-weight:800;font-size:13px;text-align:left;border:2px solid {{ o.bc }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="margin-bottom:var(--space-6)">
+          <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:var(--space-2)">Run length</div>
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--space-2)">
+            <sc-for list="{{ lengthOpts }}" as="o" hint-placeholder-count="5">
+              <button onClick="{{ o.onClick }}" style="cursor:pointer;padding:13px 4px;font-family:var(--font-heading);font-weight:800;font-size:14px;text-align:center;border:2px solid {{ o.bc }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex;align-items:baseline;gap:var(--space-3);margin-bottom:var(--space-2)">
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);flex:1">{{ poolTitle }}</div>
+            <div style="font-size:11px;letter-spacing:0.08em;color:var(--color-neutral-600)">{{ poolCount }} in play</div>
+          </div>
+
+          <sc-if value="{{ showPresets }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="display:flex;flex-wrap:wrap;gap:var(--space-2)">
+                <sc-for list="{{ presets }}" as="p" hint-placeholder-count="8">
+                  <button onClick="{{ p.onClick }}" style="cursor:pointer;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);min-height:44px;padding:10px 14px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase" style-hover="border-color:var(--color-accent);color:var(--color-accent)">{{ p.label }}</button>
+                </sc-for>
+              </div>
+              <button onClick="{{ toggleGrid }}" style="cursor:pointer;border:0;background:transparent;color:var(--color-accent);font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;min-height:44px;padding:var(--space-3) 0">{{ gridToggleLabel }}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showGrid }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-2)">
+              <sc-for list="{{ poolItems }}" as="it" hint-placeholder-count="12">
+                <button onClick="{{ it.onClick }}" style="cursor:pointer;padding:12px 10px;text-align:left;border:2px solid {{ it.bc }};background:{{ it.bg }};color:{{ it.fg }}">
+                  <div style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ it.short }}</div>
+                  <div style="font-size:10px;letter-spacing:0.03em;opacity:.75;margin-top:2px">{{ it.long }}</div>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <hr class="hr">
+        <button onClick="{{ startDrill }}" disabled="{{ cannotStart }}" style="width:100%;cursor:pointer;border:2px solid var(--color-accent);background:var(--color-accent);color:#ffffff;font-family:var(--font-heading);font-weight:800;font-size:16px;letter-spacing:0.05em;text-transform:uppercase;padding:17px var(--space-4);text-align:left;opacity:{{ startOpacity }}">{{ startLabel }}</button>
+        <div style="font-size:12px;line-height:1.5;color:var(--color-neutral-600);margin-top:var(--space-2);text-wrap:pretty">{{ startHint }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="padding-top:var(--space-8)">
+        <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700)">Loading guitar samples</div>
+        <h1 style="font-size:34px;margin:var(--space-2) 0 var(--space-4)">{{ loadPct }}</h1>
+        <div style="height:4px;background:var(--color-neutral-300)">
+          <div style="height:4px;background:var(--color-accent);width:{{ loadPct }}"></div>
+        </div>
+        <div style="font-size:12px;color:var(--color-neutral-600);margin-top:var(--space-3)">Fetched once, then cached for offline use.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDrill }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:var(--space-3)">
+          <div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:0.1em;flex:1">{{ qNumLabel }} / {{ totalLabel }}</div>
+          <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-neutral-700)">{{ runScoreLabel }}</div>
+        </div>
+        <div style="height:4px;background:var(--color-neutral-300);margin-top:var(--space-2)">
+          <div style="height:4px;background:var(--color-accent);width:{{ progressPct }}"></div>
+        </div>
+
+        <div style="border:2px solid var(--color-text);margin-top:var(--space-6);padding:var(--space-4);min-height:104px;display:flex;flex-direction:column;justify-content:center">
+          <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ promptKicker }}</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+            <div style="width:12px;height:12px;background:var(--color-accent);animation:{{ pulseAnim }}"></div>
+            <div style="font-family:var(--font-heading);font-weight:800;font-size:29px;letter-spacing:-0.02em;line-height:1.05">{{ promptTitle }}</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr auto;gap:var(--space-2);margin-top:var(--space-3)">
+          <button onClick="{{ replay }}" style="cursor:pointer;border:2px solid var(--color-text);background:transparent;color:var(--color-text);font-family:var(--font-heading);font-weight:800;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;padding:14px var(--space-4);text-align:left" style-hover="border-color:var(--color-accent);background:var(--color-accent-100)" style-active="border-color:var(--color-accent-600);background:var(--color-accent-200)">Replay {{ replayCountLabel }}</button>
+          <button onClick="{{ cancelDrill }}" style="cursor:pointer;border:2px solid var(--color-divider);background:transparent;color:var(--color-neutral-700);font-size:12px;letter-spacing:0.08em;text-transform:uppercase;padding:14px var(--space-4)" style-hover="border-color:var(--color-accent);color:var(--color-accent)">Cancel</button>
+        </div>
+
+        <hr class="hr">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-2)">
+          <sc-for list="{{ answerPad }}" as="a" hint-placeholder-count="12">
+            <button onClick="{{ a.onClick }}" style="cursor:pointer;min-height:60px;padding:10px 8px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;border:2px solid var(--color-divider);background:transparent;color:var(--color-text)" style-hover="border-color:var(--color-accent);background:var(--color-accent-100)" style-active="border-color:var(--color-accent-600);background:var(--color-accent-200)">
+              <span style="font-family:var(--font-heading);font-weight:800;font-size:17px">{{ a.short }}</span>
+              <span style="font-size:10px;letter-spacing:0.03em;color:var(--color-neutral-600);margin-top:2px">{{ a.long }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="font-size:12px;color:var(--color-neutral-600);margin-top:var(--space-4)">No answer is revealed until the run is over.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ resultLabel }}</div>
+        <h1 style="font-size:34px;margin:var(--space-2) 0 var(--space-4)">Drill complete</h1>
+
+        <div style="display:flex;align-items:flex-end;gap:var(--space-4);border-top:2px solid var(--color-text);border-bottom:2px solid var(--color-text);padding:var(--space-4) 0">
+          <div style="font-family:var(--font-heading);font-weight:800;font-size:64px;line-height:.88;letter-spacing:-0.04em;color:var(--color-accent)">{{ resultPct }}</div>
+          <div style="font-size:13px;color:var(--color-neutral-700);padding-bottom:7px">{{ resultCount }}</div>
+        </div>
+
+        <sc-if value="{{ hasWeakest }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:var(--space-4)">
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:var(--space-1)">Where the misses were</div>
+            <div style="font-family:var(--font-heading);font-weight:800;font-size:20px;text-wrap:pretty">{{ weakestLabel }}</div>
+          </div>
+        </sc-if>
+
+        <hr class="hr">
+        <table class="table">
+          <thead><tr><th>Item</th><th style="text-align:right">Asked</th><th style="text-align:right">Right</th><th style="width:32%">Accuracy</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ resultRows }}" as="r" hint-placeholder-count="6">
+              <tr>
+                <td style="font-family:var(--font-heading);font-weight:800">{{ r.label }}</td>
+                <td style="text-align:right">{{ r.asked }}</td>
+                <td style="text-align:right">{{ r.correct }}</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="flex:1;height:8px;background:var(--color-neutral-300)">
+                      <div style="height:8px;background:var(--color-accent);width:{{ r.pct }}"></div>
+                    </div>
+                    <span style="font-size:11px;color:var(--color-neutral-700);min-width:30px;text-align:right">{{ r.pct }}</span>
+                  </div>
+                </td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+
+        <sc-if value="{{ hasConfusions }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <hr class="hr">
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);margin-bottom:var(--space-2)">Confusions this run</div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-1)">
+              <sc-for list="{{ confusions }}" as="c" hint-placeholder-count="3">
+                <div style="display:flex;align-items:baseline;gap:var(--space-2);font-size:13px;border-bottom:1px solid var(--color-divider);padding-bottom:5px">
+                  <span style="font-family:var(--font-heading);font-weight:800">{{ c.actual }}</span>
+                  <span style="color:var(--color-neutral-600)">heard as</span>
+                  <span style="font-family:var(--font-heading);font-weight:800;color:var(--color-accent-700)">{{ c.said }}</span>
+                  <span style="margin-left:auto;color:var(--color-neutral-600);font-size:11px">×{{ c.n }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <hr class="hr">
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <button onClick="{{ runAgain }}" style="cursor:pointer;border:2px solid var(--color-accent);background:var(--color-accent);color:#ffffff;font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:0.05em;text-transform:uppercase;padding:16px var(--space-4);text-align:left">Run it again</button>
+          <button onClick="{{ goConfig }}" style="cursor:pointer;border:2px solid var(--color-text);background:transparent;color:var(--color-text);font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:0.05em;text-transform:uppercase;padding:16px var(--space-4);text-align:left" style-hover="background:var(--color-accent-100);border-color:var(--color-accent)">Change setup</button>
+          <button onClick="{{ goStats }}" style="cursor:pointer;border:0;background:transparent;color:var(--color-accent);font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;min-height:44px;padding:12px 0;text-align:left">History and all-time stats →</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStats }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <button onClick="{{ goHome }}" style="border:0;background:transparent;cursor:pointer;color:var(--color-accent);font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;min-height:44px;padding:12px 0;margin-bottom:var(--space-2)">← Modes</button>
+        <h1 style="font-size:34px;margin:0 0 var(--space-4)">Progress</h1>
+
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-2)">
+          <sc-for list="{{ bucketOpts }}" as="o" hint-placeholder-count="3">
+            <button onClick="{{ o.onClick }}" style="cursor:pointer;padding:11px 8px;font-family:var(--font-heading);font-weight:800;font-size:12px;text-align:left;border:2px solid {{ o.bc }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+
+        <hr class="hr">
+        <sc-if value="{{ hasHistory }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:var(--space-3);margin-bottom:var(--space-3)">
+              <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);flex:1">Accuracy by session</div>
+              <div style="font-size:11px;color:var(--color-neutral-600)">{{ historyCountLabel }}</div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:3px;height:132px;border-bottom:2px solid var(--color-text);padding-bottom:0">
+              <sc-for list="{{ history }}" as="h" hint-placeholder-count="10">
+                <div title="{{ h.title }}" style="flex:1;min-width:6px;height:{{ h.h }};background:{{ h.color }}"></div>
+              </sc-for>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-neutral-600);margin-top:6px">
+              <span>{{ historyFirst }}</span>
+              <span>{{ historyTrend }}</span>
+              <span>{{ historyLast }}</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasStatRows }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <hr class="hr">
+            <div style="display:flex;align-items:baseline;gap:var(--space-3);margin-bottom:var(--space-3)">
+              <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-neutral-700);flex:1">All-time · {{ statSummaryCount }}</div>
+              <div style="font-family:var(--font-heading);font-weight:800;font-size:22px;color:var(--color-accent)">{{ statSummaryPct }}</div>
+            </div>
+            <table class="table">
+              <thead><tr><th>Item</th><th style="text-align:right">Asked</th><th style="width:38%">Accuracy</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ statRows }}" as="r" hint-placeholder-count="8">
+                  <tr>
+                    <td style="font-family:var(--font-heading);font-weight:800">{{ r.label }}</td>
+                    <td style="text-align:right">{{ r.asked }}</td>
+                    <td>
+                      <div style="display:flex;align-items:center;gap:8px">
+                        <div style="flex:1;height:8px;background:var(--color-neutral-300)">
+                          <div style="height:8px;background:{{ r.barColor }};width:{{ r.pct }}"></div>
+                        </div>
+                        <span style="font-size:11px;color:var(--color-neutral-700);min-width:30px;text-align:right">{{ r.pct }}</span>
+                      </div>
+                    </td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <div style="font-size:12px;line-height:1.5;color:var(--color-neutral-600);margin-top:var(--space-3);text-wrap:pretty">{{ statFootnote }}</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noStatRows }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:14px;color:var(--color-neutral-700)">Nothing recorded in this mode yet.</div>
+        </sc-if>
+
+        <hr class="hr">
+        <button onClick="{{ resetStats }}" style="cursor:pointer;border:2px solid var(--color-divider);background:transparent;color:var(--color-neutral-700);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;min-height:44px;padding:11px var(--space-4)" style-hover="border-color:var(--color-accent);color:var(--color-accent)">{{ resetLabel }}</button>
+      </div>
+    </sc-if>
+
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 430, &quot;height&quot;: 860 },
+  &quot;weightByHistory&quot;: {
+    &quot;editor&quot;: &quot;boolean&quot;,
+    &quot;default&quot;: true,
+    &quot;tsType&quot;: &quot;boolean&quot;,
+    &quot;section&quot;: &quot;Drill&quot;,
+    &quot;label&quot;: &quot;Weight questions by past accuracy&quot;
+  },
+  &quot;showRunningScore&quot;: {
+    &quot;editor&quot;: &quot;boolean&quot;,
+    &quot;default&quot;: true,
+    &quot;tsType&quot;: &quot;boolean&quot;,
+    &quot;section&quot;: &quot;Drill&quot;,
+    &quot;label&quot;: &quot;Show running score during a run&quot;
+  },
+  &quot;noteGapMs&quot;: {
+    &quot;editor&quot;: &quot;range&quot;,
+    &quot;default&quot;: 640,
+    &quot;min&quot;: 300,
+    &quot;max&quot;: 1400,
+    &quot;step&quot;: 20,
+    &quot;unit&quot;: &quot;ms&quot;,
+    &quot;tsType&quot;: &quot;number&quot;,
+    &quot;section&quot;: &quot;Playback&quot;,
+    &quot;label&quot;: &quot;Gap between melodic notes&quot;
+  }
+}">
+class Component extends DCLogic {
+  SF = 'https://gleitz.github.io/midi-js-soundfonts/MusyngKite/acoustic_guitar_nylon-mp3/';
+  SFN = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  LOW = 40; HIGH = 64; // E2–E4
+
+  IV = [
+    { s: 1, short: 'm2', long: 'Minor 2nd' }, { s: 2, short: 'M2', long: 'Major 2nd' },
+    { s: 3, short: 'm3', long: 'Minor 3rd' }, { s: 4, short: 'M3', long: 'Major 3rd' },
+    { s: 5, short: 'P4', long: 'Perfect 4th' }, { s: 6, short: 'TT', long: 'Tritone' },
+    { s: 7, short: 'P5', long: 'Perfect 5th' }, { s: 8, short: 'm6', long: 'Minor 6th' },
+    { s: 9, short: 'M6', long: 'Major 6th' }, { s: 10, short: 'm7', long: 'Minor 7th' },
+    { s: 11, short: 'M7', long: 'Major 7th' }, { s: 12, short: 'P8', long: 'Octave' }
+  ];
+  TRIADS = [
+    { id: 'maj', short: 'Major', long: '1 3 5', iv: [0, 4, 7] },
+    { id: 'min', short: 'Minor', long: '1 ♭3 5', iv: [0, 3, 7] },
+    { id: 'dim', short: 'Dim', long: '1 ♭3 ♭5', iv: [0, 3, 6] },
+    { id: 'aug', short: 'Aug', long: '1 3 ♯5', iv: [0, 4, 8] },
+    { id: 'sus4', short: 'Sus4', long: '1 4 5', iv: [0, 5, 7] },
+    { id: 'sus2', short: 'Sus2', long: '1 2 5', iv: [0, 2, 7] }
+  ];
+  PRESETS = [
+    { label: 'All', pick: 'all' },
+    { label: 'Major', set: [2, 4, 9, 11] },
+    { label: 'Minor', set: [1, 3, 8, 10] },
+    { label: 'Perfect', set: [5, 7, 12] },
+    { label: '3rds + 6ths', set: [3, 4, 8, 9] },
+    { label: '4 · TT · 5', set: [5, 6, 7] },
+    { label: '2nds + 7ths', set: [1, 2, 10, 11] },
+    { label: 'Clear', set: [] }
+  ];
+
+  state = {
+    screen: 'home',
+    mode: 'melodic',
+    direction: 'asc',
+    content: 'intervals',
+    length: 20,
+    intervals: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    triads: ['maj', 'min', 'dim', 'aug'],
+    showGrid: false,
+    q: null, qIndex: 0, total: 0, log: [], playing: false, replays: 0,
+    loaded: 0, loadTotal: 0,
+    stats: {}, sessions: [], last: null, statBucket: 'melodic'
+  };
+
+  componentDidMount() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('eartrainer.v1') || '{}'); } catch (e) {}
+    const next = {};
+    if (saved.stats) next.stats = saved.stats;
+    if (saved.sessions) next.sessions = saved.sessions;
+    if (saved.last) next.last = saved.last;
+    if (saved.cfg) Object.assign(next, saved.cfg);
+    if (Object.keys(next).length) this.setState(next);
+
+    if (location.protocol === 'https:' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  }
+  componentWillUnmount() {
+    if (this._t) clearTimeout(this._t);
+  }
+
+  persist(extra) {
+    const s = Object.assign({}, this.state, extra || {});
+    try {
+      localStorage.setItem('eartrainer.v1', JSON.stringify({
+        stats: s.stats, sessions: s.sessions, last: s.last,
+        cfg: {
+          mode: s.mode, direction: s.direction, content: s.content,
+          length: s.length, intervals: s.intervals, triads: s.triads, showGrid: s.showGrid
+        }
+      }));
+    } catch (e) {}
+  }
+
+  /* ---------------- audio ---------------- */
+  ctx() {
+    if (!this._ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      this._ctx = new AC();
+      this._buf = {};
+    }
+    if (this._ctx.state === 'suspended') this._ctx.resume();
+    return this._ctx;
+  }
+  freq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  sfUrl(m) { return this.SF + this.SFN[m % 12] + (Math.floor(m / 12) - 1) + '.mp3'; }
+
+  // Plucked-string fallback, used only if the sample fetch fails.
+  synthBuffer(midi) {
+    const ctx = this.ctx();
+    const sr = ctx.sampleRate;
+    const N = Math.max(2, Math.round(sr / this.freq(midi)));
+    const len = Math.ceil(sr * 2.6);
+    const buf = ctx.createBuffer(1, len, sr);
+    const y = buf.getChannelData(0);
+    let prev = 0;
+    for (let i = 0; i < N && i < len; i++) {
+      prev = 0.55 * prev + 0.45 * (Math.random() * 2 - 1);
+      y[i] = prev * Math.min(1, i / 24);
+    }
+    const a = Math.pow(0.0008, N / (sr * 3.2));
+    for (let i = N; i < len; i++) {
+      const j = i - N;
+      y[i] = a * 0.5 * (y[j] + y[j + 1 < len ? j + 1 : j]);
+    }
+    let peak = 0;
+    for (let i = 0; i < len; i++) peak = Math.max(peak, Math.abs(y[i]));
+    if (peak) { const g = 0.9 / peak; for (let i = 0; i < len; i++) y[i] *= g; }
+    return buf;
+  }
+  async loadNote(midi) {
+    const ctx = this.ctx();
+    if (this._buf[midi]) return this._buf[midi];
+    try {
+      const res = await fetch(this.sfUrl(midi));
+      if (!res.ok) throw new Error('http ' + res.status);
+      const ab = await res.arrayBuffer();
+      const buf = await new Promise((ok, no) => {
+        const p = ctx.decodeAudioData(ab, ok, no);
+        if (p && p.then) p.then(ok, no);
+      });
+      this._buf[midi] = buf;
+    } catch (e) {
+      this._sampleFail = true;
+      this._buf[midi] = this.synthBuffer(midi);
+    }
+    return this._buf[midi];
+  }
+  async preload() {
+    const need = [];
+    for (let m = this.LOW; m <= this.HIGH; m++) if (!this._buf[m]) need.push(m);
+    if (!need.length) return;
+    this.setState({ loaded: 0, loadTotal: need.length });
+    let done = 0;
+    await Promise.all(need.map((m) => this.loadNote(m).then(() => {
+      done++;
+      this.setState({ loaded: done });
+    })));
+  }
+  pluck(midi, at, dur, vol) {
+    const ctx = this.ctx();
+    const buf = this._buf[midi];
+    if (!buf) return;
+    const t = ctx.currentTime + at;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.008);
+    g.gain.setValueAtTime(vol, t + dur * 0.55);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(g); g.connect(ctx.destination);
+    src.start(t); src.stop(t + dur + 0.05);
+  }
+  play(notes, sequential) {
+    const gap = (this.props.noteGapMs ?? 640) / 1000;
+    let end;
+    if (sequential) {
+      notes.forEach((m, i) => this.pluck(m, i * gap, 1.8, 0.75));
+      end = (notes.length - 1) * gap + 1.8;
+    } else {
+      notes.forEach((m, i) => this.pluck(m, i * 0.02, 2.6, 0.62 - i * 0.03));
+      end = 2.6;
+    }
+    this.setState({ playing: true });
+    if (this._t) clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ playing: false }), Math.min(end, 3.2) * 1000);
+  }
+
+  /* ---------------- drill ---------------- */
+  bucket(s) {
+    s = s || this.state;
+    if (s.mode === 'melodic') return 'melodic';
+    return s.content === 'intervals' ? 'harmonic' : 'triads';
+  }
+  isIv(s) { return this.bucket(s) !== 'triads'; }
+  pool(s) {
+    s = s || this.state;
+    if (this.isIv(s)) return this.IV.filter((i) => s.intervals.indexOf(i.s) >= 0);
+    return this.TRIADS.filter((c) => s.triads.indexOf(c.id) >= 0);
+  }
+
+  // History weighting: items answered badly in the past come up more often.
+  weightedPick(pool) {
+    if (!(this.props.weightByHistory ?? true)) return pool[Math.floor(Math.random() * pool.length)];
+    const bs = (this.state.stats || {})[this.bucket()] || {};
+    const w = pool.map((p) => {
+      const e = bs[p.short];
+      if (!e || e.asked < 4) return 1.4;
+      return 1 + 2.6 * Math.pow(1 - e.correct / e.asked, 1.2);
+    });
+    const total = w.reduce((a, b) => a + b, 0);
+    let r = Math.random() * total;
+    for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; }
+    return pool[pool.length - 1];
+  }
+  makeQuestion() {
+    const s = this.state;
+    const pool = this.pool();
+    const pick = this.weightedPick(pool);
+    if (this.isIv()) {
+      const lo = this.LOW + Math.floor(Math.random() * (this.HIGH - this.LOW - pick.s + 1));
+      let notes = [lo, lo + pick.s];
+      const desc = s.mode === 'melodic' && (s.direction === 'desc' || (s.direction === 'both' && Math.random() < 0.5));
+      if (desc) notes = [lo + pick.s, lo];
+      return { key: pick.short, label: pick.long, notes: notes };
+    }
+    const span = Math.max.apply(null, pick.iv);
+    const root = this.LOW + Math.floor(Math.random() * (this.HIGH - this.LOW - span + 1));
+    return { key: pick.short, label: pick.long, notes: pick.iv.map((i) => root + i) };
+  }
+  next(log) {
+    const q = this.makeQuestion();
+    this.setState({ q: q, qIndex: this.state.qIndex + 1, log: log, replays: 0 });
+    setTimeout(() => this.play(q.notes, this.state.mode === 'melodic'), 280);
+  }
+  replay = () => {
+    const q = this.state.q;
+    if (!q) return;
+    this.setState({ replays: this.state.replays + 1 });
+    this.play(q.notes, this.state.mode === 'melodic');
+  };
+  startDrill = async () => {
+    if (this.pool().length < 2) return;
+    this.ctx();
+    this.setState({ screen: 'loading', log: [], qIndex: 0, total: this.state.length });
+    await this.preload();
+    this.setState({ screen: 'drill' });
+    this.next([]);
+  };
+  answer = (key) => {
+    const q = this.state.q;
+    if (!q) return;
+    const log = this.state.log.concat([{ key: q.key, ok: key === q.key, said: key }]);
+    if (this.state.qIndex >= this.state.total) this.finish(log);
+    else this.next(log);
+  };
+  // Abandons the run outright: nothing is scored and nothing is banked.
+  cancelDrill = () => {
+    if (this._t) clearTimeout(this._t);
+    this.setState({ screen: 'config', q: null, playing: false, log: [], qIndex: 0, total: 0, replays: 0 });
+  };
+  finish(log) {
+    if (this._t) clearTimeout(this._t);
+    const b = this.bucket();
+    const stats = JSON.parse(JSON.stringify(this.state.stats || {}));
+    if (!stats[b]) stats[b] = {};
+    log.forEach((r) => {
+      const e = stats[b][r.key] || { asked: 0, correct: 0 };
+      e.asked++; if (r.ok) e.correct++;
+      stats[b][r.key] = e;
+    });
+    const correct = log.filter((r) => r.ok).length;
+    const sessions = (this.state.sessions || []).concat([{
+      bucket: b, at: Date.now(), asked: log.length, correct: correct, label: this.runLabel()
+    }]).slice(-60);
+    const last = { label: this.runLabel(), score: correct + '/' + log.length };
+    this.setState({ screen: 'results', log: log, stats: stats, sessions: sessions, last: last, statBucket: b, q: null, playing: false });
+    this.persist({ stats: stats, sessions: sessions, last: last });
+  }
+  runLabel(s) {
+    s = s || this.state;
+    if (s.mode === 'melodic') {
+      const d = s.direction === 'asc' ? 'ascending' : s.direction === 'desc' ? 'descending' : 'mixed';
+      return 'Melodic, ' + d;
+    }
+    return s.content === 'intervals' ? 'Harmonic dyads' : 'Triad quality';
+  }
+
+  opt(label, active, onClick) {
+    return {
+      label: label, onClick: onClick,
+      bg: active ? 'var(--color-accent)' : 'transparent',
+      fg: active ? '#ffffff' : 'var(--color-text)',
+      bc: active ? 'var(--color-accent)' : 'var(--color-divider)'
+    };
+  }
+  pct(c, a) { return a ? Math.round((c / a) * 100) + '%' : '0%'; }
+
+  renderVals() {
+    const s = this.state;
+    const iv = this.isIv();
+    const set = (o) => { this.setState(o); this.persist(o); };
+    const poolCount = this.pool().length;
+
+    const poolItems = iv
+      ? this.IV.map((i) => {
+        const on = s.intervals.indexOf(i.s) >= 0;
+        return Object.assign({ short: i.short, long: i.long }, this.opt(i.short, on, () => {
+          set({ intervals: on ? s.intervals.filter((x) => x !== i.s) : s.intervals.concat([i.s]).sort((a, c) => a - c) });
+        }));
+      })
+      : this.TRIADS.map((c) => {
+        const on = s.triads.indexOf(c.id) >= 0;
+        return Object.assign({ short: c.short, long: c.long }, this.opt(c.short, on, () => {
+          set({ triads: on ? s.triads.filter((x) => x !== c.id) : s.triads.concat([c.id]) });
+        }));
+      });
+
+    const answerPad = this.pool().map((p) => ({
+      short: p.short, long: p.long, onClick: () => this.answer(p.short)
+    }));
+
+    // this run
+    const agg = {};
+    s.log.forEach((r) => {
+      const e = agg[r.key] || { asked: 0, correct: 0 };
+      e.asked++; if (r.ok) e.correct++; agg[r.key] = e;
+    });
+    const resultRows = Object.keys(agg).map((k) => ({
+      label: k, asked: agg[k].asked, correct: agg[k].correct,
+      pct: this.pct(agg[k].correct, agg[k].asked), rate: agg[k].correct / agg[k].asked
+    })).sort((a, c) => a.rate - c.rate);
+    const rCorrect = s.log.filter((r) => r.ok).length;
+    const weakest = resultRows.filter((r) => r.rate < 1).slice(0, 3);
+
+    const cmap = {};
+    s.log.filter((r) => !r.ok).forEach((r) => {
+      const k = r.key + '→' + r.said;
+      cmap[k] = (cmap[k] || 0) + 1;
+    });
+    const confusions = Object.keys(cmap).map((k) => ({
+      actual: k.split('→')[0], said: k.split('→')[1], n: cmap[k]
+    })).sort((a, c) => c.n - a.n).slice(0, 5);
+
+    // all-time
+    const bs = (s.stats || {})[s.statBucket] || {};
+    const statRows = Object.keys(bs).map((k) => ({
+      label: k, asked: bs[k].asked, pct: this.pct(bs[k].correct, bs[k].asked),
+      rate: bs[k].correct / bs[k].asked,
+      barColor: bs[k].correct / bs[k].asked < 0.7 ? 'var(--color-accent)' : 'var(--color-neutral-800)'
+    })).sort((a, c) => a.rate - c.rate);
+    const sAsked = statRows.reduce((t, r) => t + r.asked, 0);
+    const sCorrect = Object.keys(bs).reduce((t, k) => t + bs[k].correct, 0);
+
+    const hist = (s.sessions || []).filter((x) => x.bucket === s.statBucket);
+    const history = hist.map((x) => {
+      const rate = x.correct / x.asked;
+      return {
+        h: Math.max(4, Math.round(rate * 128)) + 'px',
+        color: rate < 0.7 ? 'var(--color-accent)' : 'var(--color-neutral-800)',
+        title: new Date(x.at).toLocaleDateString() + ' · ' + x.correct + '/' + x.asked
+      };
+    });
+    let trend = '';
+    if (hist.length >= 4) {
+      const half = Math.floor(hist.length / 2);
+      const avg = (arr) => arr.reduce((t, x) => t + x.correct / x.asked, 0) / arr.length;
+      const d = Math.round((avg(hist.slice(half)) - avg(hist.slice(0, half))) * 100);
+      trend = d === 0 ? 'flat' : (d > 0 ? '+' + d : String(d)) + ' pts';
+    }
+
+    const loadPct = s.loadTotal ? Math.round((s.loaded / s.loadTotal) * 100) + '%' : '0%';
+
+    return {
+      isHome: s.screen === 'home', isConfig: s.screen === 'config', isLoading: s.screen === 'loading',
+      isDrill: s.screen === 'drill', isResults: s.screen === 'results', isStats: s.screen === 'stats',
+      rangeLabel: 'E2 to E4',
+      hasLast: !!s.last, lastLabel: s.last ? s.last.label : '', lastScore: s.last ? s.last.score : '',
+
+      goHome: () => this.setState({ screen: 'home' }),
+      goConfig: () => this.setState({ screen: 'config' }),
+      goStats: () => this.setState({ screen: 'stats', statBucket: this.bucket() }),
+      chooseMelodic: () => set({ mode: 'melodic', screen: 'config' }),
+      chooseHarmonic: () => set({ mode: 'harmonic', screen: 'config' }),
+
+      modeTitle: s.mode === 'melodic' ? 'Melodic' : 'Harmonic',
+      showDirection: s.mode === 'melodic',
+      showContent: s.mode === 'harmonic',
+      directionOpts: [['asc', 'Ascending'], ['desc', 'Descending'], ['both', 'Mixed']]
+        .map((p) => this.opt(p[1], s.direction === p[0], () => set({ direction: p[0] }))),
+      contentOpts: [['intervals', 'Intervals'], ['triads', 'Triads']]
+        .map((p) => this.opt(p[1], s.content === p[0], () => set({ content: p[0] }))),
+      lengthOpts: [10, 20, 30, 50, 100].map((n) => this.opt(String(n), s.length === n, () => set({ length: n }))),
+
+      poolTitle: iv ? 'Intervals in play' : 'Triads in play',
+      poolCount: poolCount,
+      showPresets: iv,
+      showGrid: !iv || s.showGrid,
+      gridToggleLabel: s.showGrid ? 'Hide the full grid' : 'Choose intervals individually',
+      toggleGrid: () => set({ showGrid: !s.showGrid }),
+      presets: this.PRESETS.map((p) => ({
+        label: p.label,
+        onClick: () => set({ intervals: p.pick === 'all' ? this.IV.map((i) => i.s) : p.set.slice() })
+      })),
+      poolItems: poolItems,
+      startDrill: this.startDrill,
+      startLabel: 'Start · ' + s.length + ' questions',
+      cannotStart: poolCount < 2,
+      startOpacity: poolCount < 2 ? '0.45' : '1',
+      startHint: poolCount < 2
+        ? 'Select at least two items to drill.'
+        : this.runLabel() + ((this.props.weightByHistory ?? true)
+          ? '. Selection is weighted towards what you have been getting wrong.'
+          : '. Selection is uniform across the pool.'),
+
+      loadPct: loadPct,
+
+      qNumLabel: String(s.qIndex),
+      totalLabel: String(s.total),
+      progressPct: s.total ? Math.round(((s.qIndex - 1) / s.total) * 100) + '%' : '0%',
+      runScoreLabel: (this.props.showRunningScore ?? true) ? rCorrect + ' of ' + s.log.length + ' right' : '',
+      promptKicker: s.mode === 'melodic'
+        ? (s.direction === 'asc' ? 'Ascending' : s.direction === 'desc' ? 'Descending' : 'Melodic')
+        : (s.content === 'intervals' ? 'Two notes together' : 'Triad'),
+      promptTitle: s.playing ? 'Listening' : 'Name it',
+      pulseAnim: s.playing ? 'et-blink 0.7s ease-in-out infinite' : 'none',
+      answerPad: answerPad,
+      replay: this.replay,
+      replayCountLabel: s.replays ? '⟳ ' + s.replays : '⟳',
+      cancelDrill: this.cancelDrill,
+
+      resultLabel: this.runLabel(),
+      resultPct: this.pct(rCorrect, s.log.length),
+      resultCount: rCorrect + ' of ' + s.log.length + ' correct',
+      hasWeakest: weakest.length > 0,
+      weakestLabel: weakest.map((w) => w.label + ' ' + w.pct).join(' · '),
+      resultRows: resultRows,
+      hasConfusions: confusions.length > 0,
+      confusions: confusions,
+      runAgain: this.startDrill,
+
+      bucketOpts: [['melodic', 'Melodic'], ['harmonic', 'Harm. dyads'], ['triads', 'Triads']]
+        .map((p) => this.opt(p[1], s.statBucket === p[0], () => this.setState({ statBucket: p[0] }))),
+      hasHistory: history.length > 1,
+      history: history,
+      historyCountLabel: history.length + ' sessions',
+      historyFirst: hist.length ? new Date(hist[0].at).toLocaleDateString() : '',
+      historyLast: hist.length ? new Date(hist[hist.length - 1].at).toLocaleDateString() : '',
+      historyTrend: trend,
+      hasStatRows: statRows.length > 0,
+      noStatRows: statRows.length === 0,
+      statRows: statRows,
+      statSummaryPct: this.pct(sCorrect, sAsked),
+      statSummaryCount: sAsked + ' questions',
+      statFootnote: (this.props.weightByHistory ?? true)
+        ? 'Sorted weakest first. Drills draw more often from the rows at the top.'
+        : 'Sorted weakest first.',
+      resetLabel: 'Reset all statistics',
+      resetStats: () => {
+        this.setState({ stats: {}, sessions: [], last: null });
+        this.persist({ stats: {}, sessions: [], last: null });
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

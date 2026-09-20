@@ -1,0 +1,559 @@
+/* App-level rules. Everything visual comes from the Modernist tokens in tokens.css. */
+
+html,
+body {
+  margin: 0;
+  background: var(--color-bg);
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+button {
+  font-family: var(--font-body);
+  color: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+a:hover {
+  color: var(--color-accent-700);
+}
+
+@keyframes et-blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* — layout — */
+
+.ae-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--color-divider);
+}
+
+.ae-mark {
+  width: 13px;
+  height: 13px;
+  background: var(--color-accent);
+}
+
+.ae-wordmark {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-right: auto;
+}
+
+.ae-main {
+  flex: 1;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) 56px;
+}
+
+/* — primitives — */
+
+.ae-ghost {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  min-height: 44px;
+  padding: var(--space-3) 0;
+  text-align: left;
+}
+
+.ae-ghost-inset {
+  padding: var(--space-3);
+  margin-right: -12px;
+}
+
+.ae-label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+}
+
+.ae-meta {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--color-neutral-600);
+}
+
+.ae-note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-neutral-600);
+  text-wrap: pretty;
+}
+
+.ae-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.ae-row > :first-child {
+  flex: 1;
+}
+
+.ae-grid {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.ae-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* — option button: the workhorse, used for direction, content, length, pool and stat tabs — */
+
+.ae-opt {
+  cursor: pointer;
+  padding: 13px 10px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 13px;
+  text-align: left;
+  border: 2px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.ae-opt[aria-pressed='true'],
+.ae-opt[aria-checked='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.ae-opt-number {
+  text-align: center;
+  font-size: 14px;
+  padding: 13px 4px;
+}
+
+.ae-opt-tall {
+  padding: 12px 10px;
+}
+
+.ae-opt-sub {
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+/* — chips — */
+
+.ae-chip {
+  cursor: pointer;
+  border: 1px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-text);
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ae-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* — bars — */
+
+.ae-track {
+  height: 4px;
+  background: var(--color-neutral-300);
+}
+
+.ae-fill {
+  height: 100%;
+  background: var(--color-accent);
+}
+
+.ae-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ae-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--color-neutral-300);
+}
+
+.ae-bar-pct {
+  font-size: 11px;
+  color: var(--color-neutral-700);
+  min-width: 30px;
+  text-align: right;
+}
+
+/* — mode cards — */
+
+.ae-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 2px solid var(--color-text);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: var(--space-4);
+}
+
+.ae-card:hover {
+  background: var(--color-accent-100);
+  border-color: var(--color-accent);
+}
+
+.ae-card-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 27px;
+  letter-spacing: -0.02em;
+}
+
+.ae-card-body {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-neutral-700);
+  margin-top: 6px;
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+
+/* — primary and secondary actions — */
+
+.ae-cta {
+  width: 100%;
+  cursor: pointer;
+  border: 2px solid var(--color-accent);
+  background: var(--color-accent);
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 17px var(--space-4);
+  text-align: left;
+}
+
+.ae-cta:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ae-action {
+  cursor: pointer;
+  border: 2px solid var(--color-accent);
+  background: var(--color-accent);
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: var(--space-4);
+  text-align: left;
+}
+
+.ae-action-secondary {
+  border-color: var(--color-text);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.ae-action-secondary:hover {
+  background: var(--color-accent-100);
+  border-color: var(--color-accent);
+}
+
+/* — drill — */
+
+.ae-prompt {
+  border: 2px solid var(--color-text);
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  min-height: 104px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ae-prompt-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 29px;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.ae-pulse {
+  width: 12px;
+  height: 12px;
+  background: var(--color-accent);
+  flex: none;
+}
+
+.ae-pulse-on {
+  animation: et-blink 0.7s ease-in-out infinite;
+}
+
+.ae-controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.ae-replay {
+  cursor: pointer;
+  border: 2px solid var(--color-text);
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 14px var(--space-4);
+  text-align: left;
+}
+
+.ae-replay:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-100);
+}
+
+.ae-replay:active {
+  border-color: var(--color-accent-600);
+  background: var(--color-accent-200);
+}
+
+.ae-cancel {
+  cursor: pointer;
+  border: 2px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-neutral-700);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 14px var(--space-4);
+}
+
+.ae-cancel:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.ae-answer {
+  cursor: pointer;
+  min-height: 60px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  border: 2px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.ae-answer:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-100);
+}
+
+.ae-answer:active {
+  border-color: var(--color-accent-600);
+  background: var(--color-accent-200);
+}
+
+.ae-answer-short {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 17px;
+}
+
+.ae-answer-long {
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: var(--color-neutral-600);
+  margin-top: 2px;
+}
+
+/* Keyboard hints are noise on a touch device, which has no keys to press. */
+.ae-keys {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ae-keys {
+    display: block;
+  }
+}
+
+/* — results — */
+
+.ae-score {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  border-top: 2px solid var(--color-text);
+  border-bottom: 2px solid var(--color-text);
+  padding: var(--space-4) 0;
+}
+
+.ae-score-pct {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  color: var(--color-accent);
+}
+
+.ae-score-count {
+  font-size: 13px;
+  color: var(--color-neutral-700);
+  padding-bottom: 7px;
+}
+
+.ae-weakest {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 20px;
+  text-wrap: pretty;
+}
+
+.ae-confusion {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: 13px;
+  border-bottom: 1px solid var(--color-divider);
+  padding-bottom: 5px;
+}
+
+.ae-confusion-actual {
+  font-family: var(--font-heading);
+  font-weight: 800;
+}
+
+.ae-confusion-said {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--color-accent-700);
+}
+
+.ae-confusion-n {
+  margin-left: auto;
+  color: var(--color-neutral-600);
+  font-size: 11px;
+}
+
+.ae-item {
+  font-family: var(--font-heading);
+  font-weight: 800;
+}
+
+.ae-right {
+  text-align: right;
+}
+
+/* — stats chart — */
+
+.ae-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 132px;
+  border-bottom: 2px solid var(--color-text);
+}
+
+.ae-chart-bar {
+  flex: 1;
+  min-width: 6px;
+}
+
+.ae-axis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  margin-top: 6px;
+}
+
+.ae-summary-pct {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--color-accent);
+}
+
+.ae-reset {
+  cursor: pointer;
+  border: 2px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-neutral-700);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  min-height: 44px;
+  padding: 11px var(--space-4);
+  text-align: left;
+}
+
+.ae-reset:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.ae-reset-confirm {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
