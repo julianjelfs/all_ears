@@ -105,3 +105,14 @@ const LONG_BY_KEY = new Map<string, string>([
 export function displayLabel(key: string): string {
   return LONG_BY_KEY.get(key) ?? key
 }
+
+function sameSet(a: readonly number[], b: readonly number[]): boolean {
+  if (a.length !== b.length) return false
+  const seen = new Set(a)
+  return b.every((x) => seen.has(x))
+}
+
+/** The preset whose set the current selection matches exactly, if any. */
+export function activePreset(intervals: readonly number[]): string | null {
+  return PRESETS.find((p) => sameSet(p.set, intervals))?.label ?? null
+}

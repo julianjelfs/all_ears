@@ -197,6 +197,17 @@ a:hover {
   color: var(--color-accent);
 }
 
+/* A preset chip lights up while the selection is exactly that preset's set. */
+.ae-chip[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+.ae-chip[aria-pressed='true']:hover {
+  color: #ffffff;
+}
+
 /* — bars — */
 
 .ae-track {

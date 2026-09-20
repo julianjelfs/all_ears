@@ -4,25 +4,28 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "vite dev",
+    "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
-    "@fontsource/archivo": "^5.1.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@fontsource/archivo": "^5.1.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@sveltejs/adapter-static": "^3.0.10",
+    "@sveltejs/kit": "^2.70.3",
+    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "@types/node": "^26.6.2",
+    "@vite-pwa/sveltekit": "^0.6.8",
+    "svelte": "^5.57.1",
+    "svelte-check": "^4.7.6",
     "typescript": "^5.6.3",
-    "vite": "^5.4.11",
-    "vite-plugin-pwa": "^0.21.1",
-    "vitest": "^2.1.8"
+    "vite": "^6.4.3",
+    "vite-plugin-pwa": "^0.21.2",
+    "vitest": "^3.2.7"
   }
 }

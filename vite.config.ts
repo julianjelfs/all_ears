@@ -1,17 +1,14 @@
+import { sveltekit } from '@sveltejs/kit/vite'
+import { SvelteKitPWA } from '@vite-pwa/sveltekit'
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
 
+const BASE = '/all_ears/'
 const SOUNDFONT = /^https:\/\/gleitz\.github\.io\/midi-js-soundfonts\/.*\.mp3$/
 
-// Served from https://julianjelfs.github.io/all_ears/, so every asset URL needs the repo prefix.
-const BASE = '/all_ears/'
-
 export default defineConfig({
-  base: BASE,
   plugins: [
-    react(),
-    VitePWA({
+    sveltekit(),
+    SvelteKitPWA({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'],
       manifest: {

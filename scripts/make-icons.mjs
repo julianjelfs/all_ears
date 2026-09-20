@@ -82,10 +82,10 @@ function png(size, scale) {
 }
 
 const targets = [
-  ['public/icon-192.png', 192, 1],
-  ['public/icon-512.png', 512, 1],
+  ['static/icon-192.png', 192, 1],
+  ['static/icon-512.png', 512, 1],
   // A maskable icon is cropped to a circle, so the mark shrinks into the safe zone.
-  ['public/icon-maskable-512.png', 512, 0.72],
+  ['static/icon-maskable-512.png', 512, 0.72],
 ]
 
 for (const [path, size, scale] of targets) {

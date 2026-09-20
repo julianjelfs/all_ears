@@ -16,37 +16,42 @@ screen" / install prompt.
 npm install
 npm run dev        # dev server
 npm run test       # vitest, pure logic only
-npm run build      # typecheck + production bundle
+npm run build      # static build into build/
 npm run preview    # serve the build at /all_ears/
+npm run typecheck  # svelte-check
+npm run icons      # regenerate the PNG icons from the SVG mark
 ```
 
-Node 22. The dev server runs under the same `/all_ears/` base path as production.
+SvelteKit with Svelte 5 runes, prerendered to a static site by `adapter-static`. Node 22. The dev
+server runs under the same `/all_ears/` base path as production.
 
 ## Deployment
 
 Pushing to `main` runs `.github/workflows/deploy.yml`: tests, build, then publish to GitHub Pages.
 The Pages source must be set to **GitHub Actions** in the repository settings. The site is served
-from a subpath, so `base` in `vite.config.ts` and the manifest's `scope`/`start_url` all carry
-`/all_ears/` — changing the repo name means changing that constant.
+from a subpath, so `paths.base` in `svelte.config.js` and the manifest's `scope`/`start_url` all
+carry `/all_ears` — changing the repo name means changing that constant (or setting `BASE_PATH`).
 
 ## How it is put together
 
 ```
 src/
-  domain/      pure logic — no React, no browser. This is what the tests cover.
-    music.ts       intervals, triads, presets, ranges, sample URLs, labels
-    questions.ts   question generation and history weighting
-    stats.ts       run breakdown, confusions, all-time rows, history chart, trend
-    storage.ts     the single versioned localStorage key
+  domain/          pure logic — no Svelte, no browser. This is what the tests cover.
+    music.ts         intervals, triads, presets, ranges, sample URLs, labels
+    questions.ts     question generation and history weighting
+    stats.ts         run breakdown, confusions, all-time rows, history chart, trend
+    storage.ts       the single versioned localStorage key
   audio/
-    engine.ts      AudioContext, sample preload and decode, scheduling, synth fallback
-  screens/     one component per screen
-  ui/          the five primitives the design leans on
-  App.tsx      screen state, the drill loop, persistence
+    engine.ts        AudioContext, sample preload and decode, scheduling, synth fallback
+  lib/
+    app.svelte.ts    the one $state store: screen, config, stats, the drill loop, persistence
+    screens/         one component per screen
+    ui/              the primitives the design leans on
+  routes/            +layout (styles, no SSR) and +page (the screen switch)
 ```
 
-Screens are values of one `screen` state, not routes — there are no deep links and the browser back
-button does not step between them. Promote them to real routes if that changes.
+Screens are values of one `screen` field in the store, not routes — there are no deep links and the
+browser back button does not step between them. Promote them to real routes if that changes.
 
 ### Audio
 
@@ -57,12 +62,18 @@ question, then memoised for the session and cached across sessions by the servic
 If a fetch or decode fails, that note falls back to a Karplus-Strong plucked string synthesised in
 the browser and the drill carries on.
 
+### Config
+
+Every choice writes to `localStorage` as it is made. The preset chips are set-replacing, and a chip
+is highlighted while the current selection matches its set exactly — pick intervals by hand and no
+chip is lit.
+
 ### Design
 
 The visual spec is the Modernist design system in `src/styles/tokens.css`, copied verbatim from the
 handoff. Zero border radius, everything flush left, 2px rules, accent used only for the primary
-action, the progress fill, the big score and "needs work" bars. Archivo is self-hosted through
-`@fontsource` so the app looks right offline.
+action, selected options, the progress fill, the big score and "needs work" bars. Archivo is
+self-hosted through `@fontsource` so the app looks right offline.
 
 ### Keyboard
 
@@ -91,4 +102,4 @@ are not tested.
 
 `design_handoff_all_ears/` holds the original brief, the HTML prototype and the design system. The
 prototype is a visual and behavioural reference, not code to port; the app was rebuilt from it in
-React.
+SvelteKit.

@@ -36,3 +36,4 @@ Each line states something a test can fail on. The test that pins it is named be
 18. A preset replaces the interval selection outright rather than adding to it. — `music.test.ts` › I18
 19. The pool is exactly the selected intervals, or the selected triads, for the active bucket. — `music.test.ts` › I19
 20. Every sample URL names its note with a flat and the right octave — MIDI 40 is `E2`. — `music.test.ts` › I20
+21. A preset chip reads as selected exactly when the current selection matches that preset's set, whatever the order. — `music.test.ts` › I21

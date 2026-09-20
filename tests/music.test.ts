@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   INTERVALS,
   PRESETS,
+  activePreset,
   SOUNDFONT_BASE,
   TRIADS,
   poolFor,
@@ -50,6 +51,18 @@ describe('pool and presets', () => {
     expect(poolFor({ ...DEFAULT_CONFIG, intervals: [] })).toEqual([])
     expect(INTERVALS.map(semitones)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
     expect(TRIADS.every((t) => t.offsets[0] === 0)).toBe(true)
+  })
+
+  it('I21: marks a preset as active exactly when the selection matches its set, in any order', () => {
+    expect(activePreset([2, 4, 9, 11])).toBe('Major')
+    expect(activePreset([11, 2, 9, 4])).toBe('Major')
+    expect(activePreset([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])).toBe('All')
+    expect(activePreset([])).toBe('Clear')
+
+    // A selection that is nobody's preset lights nothing up.
+    expect(activePreset([2, 4, 9])).toBeNull()
+    expect(activePreset([2, 4, 9, 11, 1])).toBeNull()
+    expect(activePreset([3, 7])).toBeNull()
   })
 
   it('I20: names sample files with flats and the right octave, with MIDI 40 as E2', () => {
