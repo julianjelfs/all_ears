@@ -57,7 +57,8 @@ browser back button does not step between them. Promote them to real routes if t
 
 One `AudioContext`, created on the Start tap rather than at page load, because iOS only unlocks
 audio inside a user gesture. All 25 notes from E2 to E4 are fetched and decoded before the first
-question, then memoised for the session and cached across sessions by the service worker.
+question, then memoised per instrument for the session and cached across sessions by the service
+worker.
 
 If a fetch or decode fails, that note falls back to a Karplus-Strong plucked string synthesised in
 the browser and the drill carries on.
@@ -67,6 +68,11 @@ the browser and the drill carries on.
 Every choice writes to `localStorage` as it is made. The preset chips are set-replacing, and a chip
 is highlighted while the current selection matches its set exactly — pick intervals by hand and no
 chip is lit.
+
+**Sound** picks the instrument: nylon-string guitar or grand piano, both from the same soundfont.
+It is timbre only — it does not affect question generation, and accuracy is banked in the same
+buckets whichever one you drill on. Notes are cached per instrument, so the first run on a new
+sound fetches its 25 samples and switching back afterwards is instant.
 
 ### Design
 
@@ -90,8 +96,9 @@ are not tested.
 ## Before this goes further
 
 - **Sample licensing.** The notes are fetched at runtime from the MIDI.js MusyngKite soundfont
-  (`gleitz.github.io`). Fine for a personal build; verify the licence and self-host before putting
-  it in front of anyone else.
+  (`gleitz.github.io`), both instruments. Fine for a personal build; verify the licence and
+  self-host before putting it in front of anyone else.
+- Adding another instrument is one row in `INSTRUMENTS` naming its soundfont directory.
 - No seventh chords, no inversions, no compound intervals. The data structures take all three:
   sevenths are another row in the triad table with a four-note offset array and their own bucket;
   compound intervals extend the semitone list past 12 and need a wider root range.

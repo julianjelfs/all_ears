@@ -37,3 +37,8 @@ Each line states something a test can fail on. The test that pins it is named be
 19. The pool is exactly the selected intervals, or the selected triads, for the active bucket. — `music.test.ts` › I19
 20. Every sample URL names its note with a flat and the right octave — MIDI 40 is `E2`. — `music.test.ts` › I20
 21. A preset chip reads as selected exactly when the current selection matches that preset's set, whatever the order. — `music.test.ts` › I21
+
+## Sound
+
+22. Each instrument is fetched from its own soundfont directory, using the same note names; an unspecified instrument is guitar. — `music.test.ts` › I22
+23. The instrument does not affect bucket routing, the pool or the run label — it is timbre only. — `music.test.ts` › I23

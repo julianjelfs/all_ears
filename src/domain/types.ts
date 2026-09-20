@@ -2,6 +2,7 @@ export type Screen = 'home' | 'config' | 'loading' | 'drill' | 'results' | 'stat
 export type Mode = 'melodic' | 'harmonic'
 export type Direction = 'asc' | 'desc' | 'both'
 export type Content = 'intervals' | 'triads'
+export type Instrument = 'guitar' | 'piano'
 export type Bucket = 'melodic' | 'harmonic' | 'triads'
 export type RunLength = 10 | 20 | 30 | 50 | 100
 
@@ -41,6 +42,7 @@ export type LastRun = { label: string; score: string }
 
 export type Config = {
   mode: Mode
+  instrument: Instrument
   direction: Direction
   content: Content
   length: RunLength

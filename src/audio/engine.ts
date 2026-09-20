@@ -1,4 +1,5 @@
 import { HIGH, LOW, frequency, sampleUrl } from '../domain/music'
+import type { Instrument } from '../domain/types'
 
 const MELODIC_DURATION = 1.8
 const MELODIC_VOLUME = 0.75
@@ -14,7 +15,8 @@ type Ctor = typeof AudioContext
 
 export class AudioEngine {
   private ctx: AudioContext | null = null
-  private buffers = new Map<number, AudioBuffer>()
+  /** Keyed by instrument and note, so switching instrument does not replay the old timbre. */
+  private buffers = new Map<string, AudioBuffer>()
   /** Set when any sample failed and the synthesised fallback stood in. */
   sampleFailed = false
 
@@ -33,21 +35,28 @@ export class AudioEngine {
     return this.ctx
   }
 
-  /** True when every note in range is already decoded, so loading can be skipped. */
-  isPreloaded(): boolean {
-    for (let m = LOW; m <= HIGH; m++) if (!this.buffers.has(m)) return false
+  private key(instrument: Instrument, midi: number): string {
+    return instrument + ':' + midi
+  }
+
+  /** True when every note in range is already decoded for this instrument. */
+  isPreloaded(instrument: Instrument): boolean {
+    for (let m = LOW; m <= HIGH; m++) if (!this.buffers.has(this.key(instrument, m))) return false
     return true
   }
 
-  async preload(onProgress: (loaded: number, total: number) => void): Promise<void> {
+  async preload(
+    instrument: Instrument,
+    onProgress: (loaded: number, total: number) => void,
+  ): Promise<void> {
     const need: number[] = []
-    for (let m = LOW; m <= HIGH; m++) if (!this.buffers.has(m)) need.push(m)
+    for (let m = LOW; m <= HIGH; m++) if (!this.buffers.has(this.key(instrument, m))) need.push(m)
     if (!need.length) return
     let done = 0
     onProgress(0, need.length)
     await Promise.all(
       need.map((m) =>
-        this.loadNote(m).then(() => {
+        this.loadNote(instrument, m).then(() => {
           done++
           onProgress(done, need.length)
         }),
@@ -55,21 +64,23 @@ export class AudioEngine {
     )
   }
 
-  private async loadNote(midi: number): Promise<AudioBuffer> {
-    const cached = this.buffers.get(midi)
+  private async loadNote(instrument: Instrument, midi: number): Promise<AudioBuffer> {
+    const key = this.key(instrument, midi)
+    const cached = this.buffers.get(key)
     if (cached) return cached
     const ctx = this.context()
     let buffer: AudioBuffer
     try {
-      const res = await this.fetchImpl(sampleUrl(midi))
+      const res = await this.fetchImpl(sampleUrl(midi, instrument))
       if (!res.ok) throw new Error('http ' + res.status)
       const bytes = await res.arrayBuffer()
       buffer = await decode(ctx, bytes)
     } catch {
       this.sampleFailed = true
+      // The fallback is a plucked string whichever instrument was asked for.
       buffer = this.synthBuffer(midi)
     }
-    this.buffers.set(midi, buffer)
+    this.buffers.set(key, buffer)
     return buffer
   }
 
@@ -104,9 +115,9 @@ export class AudioEngine {
     return buf
   }
 
-  private pluck(midi: number, at: number, dur: number, vol: number): void {
+  private pluck(instrument: Instrument, midi: number, at: number, dur: number, vol: number): void {
     const ctx = this.context()
-    const buf = this.buffers.get(midi)
+    const buf = this.buffers.get(this.key(instrument, midi))
     if (!buf) return
     const t = ctx.currentTime + at
     const src = ctx.createBufferSource()
@@ -123,15 +134,21 @@ export class AudioEngine {
   }
 
   /** Plays the question and returns how long the indicator should stay lit, in ms. */
-  play(notes: number[], sequential: boolean, gapMs: number): number {
+  play(instrument: Instrument, notes: number[], sequential: boolean, gapMs: number): number {
     let end: number
     if (sequential) {
       const gap = gapMs / 1000
-      notes.forEach((m, i) => this.pluck(m, i * gap, MELODIC_DURATION, MELODIC_VOLUME))
+      notes.forEach((m, i) => this.pluck(instrument, m, i * gap, MELODIC_DURATION, MELODIC_VOLUME))
       end = (notes.length - 1) * gap + MELODIC_DURATION
     } else {
       notes.forEach((m, i) =>
-        this.pluck(m, i * STRUM, HARMONIC_DURATION, HARMONIC_VOLUME - i * HARMONIC_VOLUME_STEP),
+        this.pluck(
+          instrument,
+          m,
+          i * STRUM,
+          HARMONIC_DURATION,
+          HARMONIC_VOLUME - i * HARMONIC_VOLUME_STEP,
+        ),
       )
       end = HARMONIC_DURATION
     }

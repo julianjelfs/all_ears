@@ -1,4 +1,4 @@
-import type { Bucket, Config, Content, Direction, Mode, PoolItem } from './types'
+import type { Bucket, Config, Content, Direction, Instrument, Mode, PoolItem } from './types'
 
 /** Playable range: E2 to E4. Roots are drawn across it so no interval lands twice in the same place. */
 export const LOW = 40
@@ -7,8 +7,17 @@ export const RANGE_LABEL = 'E2 to E4'
 
 /** The soundfont names notes with flats. */
 export const SOUNDFONT_NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
-export const SOUNDFONT_BASE =
-  'https://gleitz.github.io/midi-js-soundfonts/MusyngKite/acoustic_guitar_nylon-mp3/'
+export const SOUNDFONT_BASE = 'https://gleitz.github.io/midi-js-soundfonts/MusyngKite/'
+
+/** Timbre only — which instrument you drill on does not change what is being tested. */
+export const INSTRUMENTS: { value: Instrument; label: string; dir: string; noun: string }[] = [
+  { value: 'guitar', label: 'Guitar', dir: 'acoustic_guitar_nylon-mp3', noun: 'nylon-string guitar' },
+  { value: 'piano', label: 'Piano', dir: 'acoustic_grand_piano-mp3', noun: 'grand piano' },
+]
+
+export function instrumentOf(value: Instrument) {
+  return INSTRUMENTS.find((i) => i.value === value) ?? INSTRUMENTS[0]
+}
 
 export const INTERVALS: readonly PoolItem[] = [
   { short: 'm2', long: 'Minor 2nd', offsets: [0, 1] },
@@ -56,8 +65,9 @@ export function frequency(midi: number): number {
   return 440 * Math.pow(2, (midi - 69) / 12)
 }
 
-export function sampleUrl(midi: number): string {
-  return SOUNDFONT_BASE + SOUNDFONT_NOTES[midi % 12] + (Math.floor(midi / 12) - 1) + '.mp3'
+export function sampleUrl(midi: number, instrument: Instrument = 'guitar'): string {
+  const note = SOUNDFONT_NOTES[midi % 12] + (Math.floor(midi / 12) - 1)
+  return SOUNDFONT_BASE + instrumentOf(instrument).dir + '/' + note + '.mp3'
 }
 
 /** Melodic and harmonic are different skills, so their accuracy is banked separately. */

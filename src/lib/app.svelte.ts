@@ -99,7 +99,12 @@ export function openStats(): void {
 }
 
 function sound(notes: number[]): void {
-  const ms = audio().play(notes, app.cfg.mode === 'melodic', SETTINGS.noteGapMs)
+  const ms = audio().play(
+    app.cfg.instrument,
+    notes,
+    app.cfg.mode === 'melodic',
+    SETTINGS.noteGapMs,
+  )
   app.playing = true
   clearTimeout(playTimer)
   playTimer = setTimeout(() => (app.playing = false), ms)
@@ -133,11 +138,11 @@ export async function startDrill(): Promise<void> {
   app.replays = 0
   app.total = app.cfg.length
 
-  if (!eng.isPreloaded()) {
+  if (!eng.isPreloaded(app.cfg.instrument)) {
     app.loaded = 0
     app.loadTotal = 0
     app.screen = 'loading'
-    await eng.preload((loaded, total) => {
+    await eng.preload(app.cfg.instrument, (loaded, total) => {
       app.loaded = loaded
       app.loadTotal = total
     })

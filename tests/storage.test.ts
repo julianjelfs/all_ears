@@ -59,5 +59,7 @@ describe('persistence', () => {
     expect(loaded.cfg.intervals).toEqual(DEFAULT_CONFIG.intervals)
     expect(loaded.cfg.triads).toEqual(DEFAULT_CONFIG.triads)
     expect(loaded.cfg.showGrid).toBe(DEFAULT_CONFIG.showGrid)
+    // A config saved before the sound selector existed falls back to guitar.
+    expect(loaded.cfg.instrument).toBe('guitar')
   })
 })

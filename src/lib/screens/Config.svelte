@@ -1,5 +1,6 @@
 <script lang="ts">
   import {
+    INSTRUMENTS,
     INTERVALS,
     PRESETS,
     TRIADS,
@@ -103,6 +104,20 @@
           onclick={() => patchConfig({ length: n })}
         >
           {n}
+        </OptionButton>
+      {/each}
+    </Grid>
+  </div>
+
+  <div style="margin-bottom:var(--space-6)">
+    <Label style="margin-bottom:var(--space-2)">Sound</Label>
+    <Grid columns={2}>
+      {#each INSTRUMENTS as i (i.value)}
+        <OptionButton
+          selected={app.cfg.instrument === i.value}
+          onclick={() => patchConfig({ instrument: i.value })}
+        >
+          {i.label}
         </OptionButton>
       {/each}
     </Grid>

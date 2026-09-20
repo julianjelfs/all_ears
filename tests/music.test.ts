@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
+  INSTRUMENTS,
   INTERVALS,
   PRESETS,
   activePreset,
+  bucketFor,
   SOUNDFONT_BASE,
   TRIADS,
   poolFor,
@@ -66,11 +68,37 @@ describe('pool and presets', () => {
   })
 
   it('I20: names sample files with flats and the right octave, with MIDI 40 as E2', () => {
-    expect(sampleUrl(40)).toBe(SOUNDFONT_BASE + 'E2.mp3')
-    expect(sampleUrl(64)).toBe(SOUNDFONT_BASE + 'E4.mp3')
-    expect(sampleUrl(60)).toBe(SOUNDFONT_BASE + 'C4.mp3')
-    expect(sampleUrl(61)).toBe(SOUNDFONT_BASE + 'Db4.mp3')
-    expect(sampleUrl(58)).toBe(SOUNDFONT_BASE + 'Bb3.mp3')
+    const guitar = SOUNDFONT_BASE + 'acoustic_guitar_nylon-mp3/'
+    expect(sampleUrl(40)).toBe(guitar + 'E2.mp3')
+    expect(sampleUrl(64)).toBe(guitar + 'E4.mp3')
+    expect(sampleUrl(60)).toBe(guitar + 'C4.mp3')
+    expect(sampleUrl(61)).toBe(guitar + 'Db4.mp3')
+    expect(sampleUrl(58)).toBe(guitar + 'Bb3.mp3')
+  })
+
+  it('I22: fetches each instrument from its own soundfont directory, same note names', () => {
+    expect(sampleUrl(40, 'guitar')).toBe(
+      SOUNDFONT_BASE + 'acoustic_guitar_nylon-mp3/E2.mp3',
+    )
+    expect(sampleUrl(40, 'piano')).toBe(SOUNDFONT_BASE + 'acoustic_grand_piano-mp3/E2.mp3')
+    expect(sampleUrl(61, 'piano')).toBe(SOUNDFONT_BASE + 'acoustic_grand_piano-mp3/Db4.mp3')
+
+    // Guitar is what an unspecified call gets, so an old caller keeps its sound.
+    expect(sampleUrl(55)).toBe(sampleUrl(55, 'guitar'))
+    expect(sampleUrl(55, 'piano')).not.toBe(sampleUrl(55, 'guitar'))
+
+    // Every listed instrument resolves to a distinct directory.
+    const dirs = INSTRUMENTS.map((i) => i.dir)
+    expect(new Set(dirs).size).toBe(dirs.length)
+  })
+
+  it('I23: keeps the instrument out of bucket routing — timbre is not a separate skill', () => {
+    expect(bucketFor('melodic', 'intervals')).toBe('melodic')
+    expect(poolFor({ ...DEFAULT_CONFIG, instrument: 'piano', intervals: [3, 7] }).map((p) => p.short))
+      .toEqual(poolFor({ ...DEFAULT_CONFIG, instrument: 'guitar', intervals: [3, 7] }).map((p) => p.short))
+    expect(runLabel({ mode: 'melodic', direction: 'asc', content: 'intervals' })).toBe(
+      'Melodic, ascending',
+    )
   })
 })
 

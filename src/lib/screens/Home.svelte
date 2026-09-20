@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { RANGE_LABEL } from '$domain/music'
+  import { RANGE_LABEL, instrumentOf } from '$domain/music'
   import type { Mode } from '$domain/types'
   import { app, chooseMode } from '../app.svelte'
   import Label from '../ui/Label.svelte'
@@ -45,7 +45,7 @@
 
   <Rule />
   <Note>
-    Sampled nylon-string guitar, {RANGE_LABEL}. Roots are randomised across the range, so the same
-    interval never lands twice in the same place.
+    Sampled {instrumentOf(app.cfg.instrument).noun}, {RANGE_LABEL}. Roots are randomised across the
+    range, so the same interval never lands twice in the same place.
   </Note>
 </div>

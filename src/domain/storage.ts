@@ -5,6 +5,7 @@ export const STORAGE_KEY = 'eartrainer.v1'
 
 export const DEFAULT_CONFIG: Config = {
   mode: 'melodic',
+  instrument: 'guitar',
   direction: 'asc',
   content: 'intervals',
   length: 20,
