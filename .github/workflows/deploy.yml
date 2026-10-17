@@ -27,6 +27,11 @@ jobs:
       - run: npm ci
       - run: npm run test
       - run: npm run build
+      # I22: SvelteKit doesn't link these itself, so check the page that ships does.
+      - name: Built page links the manifest and registers the service worker
+        run: |
+          grep -q 'rel="manifest" href="/all_ears/manifest.webmanifest"' build/index.html
+          grep -q 'src="/all_ears/registerSW.js"' build/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build

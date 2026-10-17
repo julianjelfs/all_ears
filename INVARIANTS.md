@@ -42,3 +42,7 @@ Each line states something a test can fail on. The test that pins it is named be
 
 22. Each instrument is fetched from its own soundfont directory, using the same note names; an unspecified instrument is guitar. — `music.test.ts` › I22
 23. The instrument does not affect bucket routing, the pool or the run label — it is timbre only. — `music.test.ts` › I23
+
+## Installable
+
+22. The built `index.html` links `manifest.webmanifest` and loads `registerSW.js`, so Chrome can install the app and the service worker gets registered. — CI step "Built page links the manifest and registers the service worker" in `deploy.yml`

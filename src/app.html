@@ -7,6 +7,11 @@
     <meta name="description" content="Relative pitch ear training on a sampled nylon-string guitar." />
     <link rel="icon" href="%sveltekit.assets%/icon.svg" />
     <link rel="apple-touch-icon" href="%sveltekit.assets%/icon.svg" />
+    <!-- @vite-pwa/sveltekit writes these files but, unlike the plain Vite plugin, never
+         links them, so they are linked by hand. Without the manifest Chrome won't install
+         the app; without registerSW.js nothing installs the service worker. -->
+    <link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
+    <script src="%sveltekit.assets%/registerSW.js" defer></script>
     <title>All Ears</title>
     %sveltekit.head%
   </head>
