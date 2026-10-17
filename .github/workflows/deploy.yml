@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
       - run: npm run test
       - run: npm run build
-      # I22: SvelteKit doesn't link these itself, so check the page that ships does.
+      # I24: SvelteKit doesn't link these itself, so check the page that ships does.
       - name: Built page links the manifest and registers the service worker
         run: |
           grep -q 'rel="manifest" href="/manifest.webmanifest"' build/index.html
