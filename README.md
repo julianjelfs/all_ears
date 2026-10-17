@@ -78,9 +78,18 @@ sound fetches its 25 samples and switching back afterwards is instant.
 
 All Ears shares Triad Trainer's look (see `DESIGN.md` in the triads repo): warm paper, brown-black
 ink, sand pills that turn ink when chosen, and cream cards for anything raised. The values live in
-`src/styles/tokens.css` under the old token names. Vermilion is the one accent and means "needs
-work": bars below 70%, and what a missed note was heard as. While the notes sound, three dots in
-Triads' do, mi and so colours lift in turn. Bricolage Grotesque is self-hosted through
+`src/styles/tokens.css` under the old token names. As in Triads, colour always means something:
+
+- Mode: melodic is cobalt and harmonic is marigold, from the mode cards through the drill prompt
+  and progress bar.
+- Family: answer tiles and interval pickers are washed in their family's colour (`familyOf` in
+  `src/domain/music.ts`): major marigold, minor cobalt, perfect and sus vermilion. Tritone,
+  diminished and augmented stay sand.
+- Result: the score tile is cobalt at 70% or better and vermilion below. Bars below 70%, and what a
+  missed note was heard as, are vermilion too.
+
+Selected controls are ink, never a colour. While the notes sound, three dots in Triads' do, mi and
+so colours lift in turn. Bricolage Grotesque is self-hosted through
 `@fontsource-variable` so the app looks right offline.
 
 The icon is two notes and the leap between them, vermilion low and cobalt high, joined by an

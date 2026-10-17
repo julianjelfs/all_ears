@@ -10,7 +10,7 @@
 </script>
 
 <Header onstats={openStats} />
-<main class="ae-main">
+<main class="ae-main" data-mode={app.cfg.mode}>
   {#if app.screen === 'home'}
     <Home />
   {:else if app.screen === 'config'}

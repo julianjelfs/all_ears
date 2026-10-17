@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { barColor, confusions, correctCount, pct, runRows, weakestLabel } from '$domain/stats'
+  import { PASS_THRESHOLD, barColor, confusions, correctCount, pct, runRows, weakestLabel } from '$domain/stats'
   import { app, go, label, openStats, startDrill } from '../app.svelte'
   import AccuracyBar from '../ui/AccuracyBar.svelte'
   import GhostButton from '../ui/GhostButton.svelte'
@@ -10,13 +10,15 @@
   const correct = $derived(correctCount(app.log))
   const weakest = $derived(weakestLabel(rows))
   const misses = $derived(confusions(app.log))
+  // The score card fills cobalt for a pass and vermilion for "needs work", the bars' rule.
+  const passed = $derived(app.log.length > 0 && correct / app.log.length >= PASS_THRESHOLD)
 </script>
 
 <div>
   <Label>{label()}</Label>
   <h1 style="font-size:34px;margin:var(--space-2) 0 var(--space-4)">Drill complete</h1>
 
-  <div class="ae-score">
+  <div class="ae-score" class:ae-score-pass={passed}>
     <div class="ae-score-pct">{pct(correct, app.log.length)}</div>
     <div class="ae-score-count">{correct} of {app.log.length} correct</div>
   </div>

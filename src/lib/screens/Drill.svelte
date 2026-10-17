@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { promptKicker } from '$domain/music'
+  import { familyOf, promptKicker } from '$domain/music'
   import { correctCount } from '$domain/stats'
   import { answer, app, cancelDrill, pool, replay } from '../app.svelte'
   import { SETTINGS } from '../settings'
@@ -74,7 +74,7 @@
   <Rule />
   <Grid columns={3}>
     {#each items as item (item.short)}
-      <button type="button" class="ae-answer" onclick={() => answer(item.short)}>
+      <button type="button" class="ae-answer fam-{familyOf(item.short)}" onclick={() => answer(item.short)}>
         <span class="ae-answer-short">{item.short}</span>
         <span class="ae-answer-long">{item.long}</span>
       </button>

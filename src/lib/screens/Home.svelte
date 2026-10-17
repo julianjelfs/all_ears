@@ -4,6 +4,7 @@
   import { app, chooseMode } from '../app.svelte'
   import Label from '../ui/Label.svelte'
   import Note from '../ui/Note.svelte'
+  import ModeGlyph from '../ui/ModeGlyph.svelte'
   import Rule from '../ui/Rule.svelte'
 
   const MODES: { mode: Mode; title: string; body: string }[] = [
@@ -26,9 +27,12 @@
 
   <div style="display:flex;flex-direction:column;gap:var(--space-3)">
     {#each MODES as m (m.mode)}
-      <button type="button" class="ae-card" onclick={() => chooseMode(m.mode)}>
-        <div class="ae-card-title">{m.title}</div>
-        <div class="ae-card-body">{m.body}</div>
+      <button type="button" class="ae-card" data-mode={m.mode} onclick={() => chooseMode(m.mode)}>
+        <div>
+          <div class="ae-card-title">{m.title}</div>
+          <div class="ae-card-body">{m.body}</div>
+        </div>
+        <ModeGlyph mode={m.mode} size={48} />
       </button>
     {/each}
   </div>

@@ -653,3 +653,155 @@ a {
     transition-duration: 1ms !important;
   }
 }
+
+/* ══ Colour with a meaning, Triads-style ══════════════════════════════════════
+   Mode: melodic is cobalt, harmonic is marigold, from the mode cards through the
+   drill. Family: answer tiles are washed in the colour of their interval family.
+   Score: cobalt for a pass, vermilion for "needs work". Selection stays ink. */
+
+[data-mode='melodic'] {
+  --mode: var(--so);
+  --on-mode: #ffffff;
+}
+
+[data-mode='harmonic'] {
+  --mode: var(--mi);
+  --on-mode: var(--color-text);
+}
+
+.ae-glyph {
+  flex: none;
+  fill: currentColor;
+}
+
+/* Mode cards are solid tiles, like Triads' tone tiles. */
+.ae-card[data-mode] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background: var(--mode);
+  color: var(--on-mode);
+  border-radius: var(--radius-lg);
+}
+
+.ae-card[data-mode]:hover {
+  background: color-mix(in srgb, var(--mode) 88%, var(--color-text));
+}
+
+.ae-card[data-mode] .ae-card-body {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.ae-card[data-mode] .ae-glyph {
+  opacity: 0.9;
+}
+
+.ae-mode-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ae-mode-chip {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--mode);
+  color: var(--on-mode);
+}
+
+/* The prompt is the mode's tile. The do-mi-so dots sit on a cream capsule, so the one
+   that shares the tile's colour doesn't vanish into it. */
+.ae-prompt {
+  background: var(--mode, var(--card));
+  color: var(--on-mode, var(--color-text));
+}
+
+.ae-prompt .ae-label {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.ae-prompt .ae-pulse {
+  padding: 8px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--card);
+}
+
+.ae-fill {
+  background: var(--mode, var(--color-text));
+}
+
+/* Families. A wash of the colour behind the tile and a dot in the corner as the key. */
+.fam-perfect { --wash: var(--do); }
+.fam-major { --wash: var(--mi); }
+.fam-minor { --wash: var(--so); }
+
+.ae-answer:is(.fam-perfect, .fam-major, .fam-minor),
+.ae-opt-tall:is(.fam-perfect, .fam-major, .fam-minor):not([aria-pressed='true']) {
+  position: relative;
+  background: color-mix(in srgb, var(--wash) 20%, #ffffff);
+}
+
+.ae-answer:is(.fam-perfect, .fam-major, .fam-minor):hover,
+.ae-opt-tall:is(.fam-perfect, .fam-major, .fam-minor):not([aria-pressed='true']):hover {
+  background: color-mix(in srgb, var(--wash) 32%, #ffffff);
+}
+
+.ae-answer:is(.fam-perfect, .fam-major, .fam-minor)::after,
+.ae-opt-tall:is(.fam-perfect, .fam-major, .fam-minor)::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--wash);
+}
+
+.ae-opt-tall[class*='fam-'] {
+  position: relative;
+}
+
+.ae-answer:active {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* Score: the big tile goes cobalt for a pass and vermilion for "needs work". */
+.ae-score {
+  background: var(--do);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.ae-score .ae-score-pct,
+.ae-score .ae-score-count {
+  color: inherit;
+}
+
+.ae-score .ae-score-count {
+  opacity: 0.85;
+}
+
+.ae-score-pass {
+  background: var(--so);
+}
+
+.ae-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ae-chip-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--wash);
+}

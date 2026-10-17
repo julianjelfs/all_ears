@@ -5,6 +5,7 @@
     PRESETS,
     TRIADS,
     activePreset,
+    familyOf,
     isIntervalBucket,
     runLabel,
     semitones,
@@ -15,6 +16,7 @@
   import GhostButton from '../ui/GhostButton.svelte'
   import Grid from '../ui/Grid.svelte'
   import Label from '../ui/Label.svelte'
+  import ModeGlyph from '../ui/ModeGlyph.svelte'
   import Note from '../ui/Note.svelte'
   import OptionButton from '../ui/OptionButton.svelte'
   import Rule from '../ui/Rule.svelte'
@@ -31,6 +33,9 @@
   ]
 
   const LENGTHS: RunLength[] = [10, 20, 30, 50, 100]
+
+  // The family presets carry the same coloured dot as the answer tiles they select.
+  const PRESET_FAMILY: Record<string, string> = { Major: 'major', Minor: 'minor', Perfect: 'perfect' }
 
   const intervalsMode = $derived(isIntervalBucket(bucket()))
   const gridVisible = $derived(!intervalsMode || app.cfg.showGrid)
@@ -58,7 +63,8 @@
 
 <div>
   <GhostButton onclick={() => go('home')} style="margin-bottom:var(--space-2)">← Modes</GhostButton>
-  <h1 style="font-size:34px;margin:0 0 var(--space-6)">
+  <h1 class="ae-mode-title" style="font-size:34px;margin:0 0 var(--space-6)">
+    <span class="ae-mode-chip"><ModeGlyph mode={app.cfg.mode} size={26} /></span>
     {app.cfg.mode === 'melodic' ? 'Melodic' : 'Harmonic'}
   </h1>
 
@@ -139,6 +145,7 @@
               aria-pressed={preset === p.label}
               onclick={() => patchConfig({ intervals: [...p.set] })}
             >
+              {#if PRESET_FAMILY[p.label]}<span class="ae-chip-dot fam-{PRESET_FAMILY[p.label]}"></span>{/if}
               {p.label}
             </button>
           {/each}
@@ -155,7 +162,7 @@
           {#each INTERVALS as i (i.short)}
             <OptionButton
               role="checkbox"
-              class="ae-opt-tall"
+              class="ae-opt-tall fam-{familyOf(i.short)}"
               selected={app.cfg.intervals.includes(semitones(i))}
               onclick={() => toggleInterval(semitones(i))}
             >
@@ -167,7 +174,7 @@
           {#each TRIADS as t (t.id)}
             <OptionButton
               role="checkbox"
-              class="ae-opt-tall"
+              class="ae-opt-tall fam-{familyOf(t.short)}"
               selected={app.cfg.triads.includes(t.id)}
               onclick={() => toggleTriad(t.id)}
             >

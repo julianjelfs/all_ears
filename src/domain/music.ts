@@ -126,3 +126,20 @@ function sameSet(a: readonly number[], b: readonly number[]): boolean {
 export function activePreset(intervals: readonly number[]): string | null {
   return PRESETS.find((p) => sameSet(p.set, intervals))?.label ?? null
 }
+
+export type Family = 'perfect' | 'major' | 'minor' | 'none'
+
+/**
+ * The colour family an answer is washed in, after Triad Trainer's three voices: major in
+ * marigold, minor in cobalt, perfect (and the sus chords built from perfect intervals) in
+ * vermilion. The tritone, diminished and augmented have no family and stay sand.
+ */
+export function familyOf(short: string): Family {
+  if (short === 'Major') return 'major'
+  if (short === 'Minor') return 'minor'
+  if (short.startsWith('Sus')) return 'perfect'
+  if (/^P\d/.test(short)) return 'perfect'
+  if (/^M\d/.test(short)) return 'major'
+  if (/^m\d/.test(short)) return 'minor'
+  return 'none'
+}
