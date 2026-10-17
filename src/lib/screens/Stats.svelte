@@ -39,7 +39,6 @@
   <Grid columns={3}>
     {#each BUCKETS as b (b.value)}
       <OptionButton
-        class="ae-opt-tall"
         selected={app.statBucket === b.value}
         onclick={() => switchBucket(b.value)}
       >
@@ -75,7 +74,7 @@
 
   {#if rows.length > 0}
     <div>
-      <Rule />
+      {#if bars.length > 1}<Rule />{/if}
       <div class="ae-row" style="margin-bottom:var(--space-3)">
         <Label>All-time · {totals.asked} questions</Label>
         <div class="ae-summary-pct">{pct(totals.correct, totals.asked)}</div>
@@ -105,7 +104,7 @@
       </Note>
     </div>
   {:else}
-    <div style="font-size:14px;color:var(--color-neutral-700)">
+    <div class="ae-note" style="font-size:14px">
       Nothing recorded in this mode yet.
     </div>
   {/if}

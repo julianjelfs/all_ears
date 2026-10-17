@@ -1,10 +1,13 @@
-/* App-level rules. Everything visual comes from the Modernist tokens in tokens.css. */
+/* App-level rules, in Triad Trainer's language: sand pills that turn ink when chosen,
+   cream cards for anything raised, weight 800 for what you read from across the room.
+   Colours come from tokens.css. */
 
 html,
 body {
   margin: 0;
   background: var(--color-bg);
   -webkit-tap-highlight-color: transparent;
+  scrollbar-color: var(--sand-strong) var(--color-bg);
 }
 
 #root {
@@ -22,26 +25,41 @@ button {
 }
 
 button:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--color-text);
 }
 
-a:hover {
-  color: var(--color-accent-700);
+/* Every control shares the press: a quick squeeze, as in Triads. */
+.ae-opt,
+.ae-chip,
+.ae-card,
+.ae-cta,
+.ae-action,
+.ae-replay,
+.ae-cancel,
+.ae-answer,
+.ae-reset,
+.ae-ghost {
+  transition:
+    background-color 160ms var(--ease-out),
+    color 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
 }
 
-@keyframes et-blink {
-  0%,
-  100% {
-    opacity: 0.25;
-  }
-  50% {
-    opacity: 1;
-  }
+.ae-opt:active,
+.ae-chip:active,
+.ae-card:active,
+.ae-cta:active:not(:disabled),
+.ae-action:active,
+.ae-replay:active,
+.ae-cancel:active,
+.ae-answer:active,
+.ae-reset:active {
+  transform: scale(0.96);
 }
 
 /* — layout — */
@@ -49,32 +67,33 @@ a:hover {
 .ae-header {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 2px solid var(--color-divider);
+  gap: 10px;
+  width: 100%;
+  max-width: 592px;
+  margin: 0 auto;
+  padding: 20px var(--space-4) 0;
 }
 
 .ae-mark {
-  width: 13px;
-  height: 13px;
-  background: var(--color-accent);
+  width: 26px;
+  height: 26px;
+  flex: none;
 }
 
 .ae-wordmark {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: 18px;
+  letter-spacing: -0.01em;
   margin-right: auto;
 }
 
 .ae-main {
   flex: 1;
   width: 100%;
-  max-width: 560px;
+  max-width: 592px;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-4) 56px;
+  padding: 28px var(--space-4) 56px;
 }
 
 /* — primitives — */
@@ -83,39 +102,49 @@ a:hover {
   border: 0;
   background: transparent;
   cursor: pointer;
-  color: var(--color-accent);
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
   min-height: 44px;
   padding: var(--space-3) 0;
   text-align: left;
 }
 
+.ae-ghost:hover {
+  color: var(--color-text);
+}
+
+/* In the header it is a proper pill, like Triads' mode switch. */
 .ae-ghost-inset {
-  padding: var(--space-3);
-  margin-right: -12px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.ae-ghost-inset:hover {
+  background: var(--sand-strong);
 }
 
 .ae-label {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-neutral-700);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
 
 .ae-meta {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--color-neutral-600);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
 }
 
 .ae-note {
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--color-neutral-600);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
   text-wrap: pretty;
 }
 
@@ -131,7 +160,7 @@ a:hover {
 
 .ae-grid {
   display: grid;
-  gap: var(--space-2);
+  gap: 6px;
 }
 
 .ae-stack {
@@ -140,84 +169,97 @@ a:hover {
   gap: var(--space-2);
 }
 
-/* — option button: the workhorse, used for direction, content, length, pool and stat tabs — */
+/* — option button: direction, content, length, sound, pool and stat tabs — */
 
 .ae-opt {
   cursor: pointer;
-  padding: 13px 10px;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 13px;
-  text-align: left;
-  border: 2px solid var(--color-divider);
-  background: transparent;
+  min-height: 40px;
+  padding: 10px 12px;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.15;
+  text-align: center;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
   color: var(--color-text);
+}
+
+.ae-opt:hover {
+  background: var(--sand-strong);
 }
 
 .ae-opt[aria-pressed='true'],
 .ae-opt[aria-checked='true'] {
-  border-color: var(--color-accent);
-  background: var(--color-accent);
-  color: #ffffff;
+  background: var(--color-text);
+  color: var(--color-bg);
 }
 
 .ae-opt-number {
-  text-align: center;
-  font-size: 14px;
-  padding: 13px 4px;
+  font-variant-numeric: tabular-nums;
+  padding: 10px 4px;
 }
 
+/* Two lines of text don't fit a pill; these are small tiles. */
 .ae-opt-tall {
-  padding: 12px 10px;
+  white-space: normal;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+}
+
+.ae-opt-tall > :first-child {
+  font-weight: 800;
 }
 
 .ae-opt-sub {
-  font-size: 10px;
-  letter-spacing: 0.03em;
+  font-size: 12px;
+  font-weight: 400;
   opacity: 0.75;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 /* — chips — */
 
 .ae-chip {
   cursor: pointer;
-  border: 1px solid var(--color-divider);
-  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
   color: var(--color-text);
-  min-height: 44px;
-  padding: 10px 14px;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .ae-chip:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  background: var(--sand-strong);
 }
 
 /* A preset chip lights up while the selection is exactly that preset's set. */
-.ae-chip[aria-pressed='true'] {
-  border-color: var(--color-accent);
-  background: var(--color-accent);
-  color: #ffffff;
-}
-
+.ae-chip[aria-pressed='true'],
 .ae-chip[aria-pressed='true']:hover {
-  color: #ffffff;
+  background: var(--color-text);
+  color: var(--color-bg);
 }
 
 /* — bars — */
 
 .ae-track {
-  height: 4px;
-  background: var(--color-neutral-300);
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  overflow: hidden;
 }
 
 .ae-fill {
   height: 100%;
-  background: var(--color-accent);
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  transition: width 360ms var(--ease-out);
 }
 
 .ae-bar {
@@ -229,126 +271,157 @@ a:hover {
 .ae-bar-track {
   flex: 1;
   height: 8px;
-  background: var(--color-neutral-300);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.ae-bar-track > div {
+  border-radius: var(--radius-pill);
 }
 
 .ae-bar-pct {
-  font-size: 11px;
-  color: var(--color-neutral-700);
-  min-width: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  min-width: 36px;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
-/* — mode cards — */
+/* — mode cards: the cream card, the one raised surface — */
 
 .ae-card {
   display: block;
   width: 100%;
   text-align: left;
-  border: 2px solid var(--color-text);
-  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
   color: inherit;
   cursor: pointer;
-  padding: var(--space-4);
+  padding: 20px 22px;
 }
 
 .ae-card:hover {
-  background: var(--color-accent-100);
-  border-color: var(--color-accent);
+  background: #fff;
 }
 
 .ae-card-title {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 27px;
-  letter-spacing: -0.02em;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96;
 }
 
 .ae-card-body {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
-  color: var(--color-neutral-700);
-  margin-top: 6px;
-  max-width: 34ch;
+  color: var(--ink-soft);
+  margin-top: 8px;
+  max-width: 38ch;
   text-wrap: pretty;
 }
 
-/* — primary and secondary actions — */
+/* — primary and secondary actions: Triads' play button — */
 
 .ae-cta {
   width: 100%;
+  min-height: 52px;
   cursor: pointer;
-  border: 2px solid var(--color-accent);
-  background: var(--color-accent);
-  color: #ffffff;
-  font-family: var(--font-heading);
-  font-weight: 800;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-weight: 700;
   font-size: 16px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 17px var(--space-4);
-  text-align: left;
+  padding: 0 24px;
+  text-align: center;
 }
 
 .ae-cta:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .ae-action {
+  min-height: 48px;
   cursor: pointer;
-  border: 2px solid var(--color-accent);
-  background: var(--color-accent);
-  color: #ffffff;
-  font-family: var(--font-heading);
-  font-weight: 800;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-weight: 700;
   font-size: 15px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: var(--space-4);
-  text-align: left;
+  padding: 0 24px;
+  text-align: center;
 }
 
 .ae-action-secondary {
-  border-color: var(--color-text);
-  background: transparent;
+  background: var(--color-surface);
   color: var(--color-text);
 }
 
 .ae-action-secondary:hover {
-  background: var(--color-accent-100);
-  border-color: var(--color-accent);
+  background: var(--sand-strong);
 }
 
 /* — drill — */
 
 .ae-prompt {
-  border: 2px solid var(--color-text);
   margin-top: var(--space-6);
-  padding: var(--space-4);
-  min-height: 104px;
+  padding: 22px 24px;
+  min-height: 132px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
 }
 
 .ae-prompt-title {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 29px;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
+  font-size: clamp(40px, 9vw, 56px);
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  font-variation-settings: 'opsz' 96;
 }
 
+/* Three dots in do, mi and so, lifting in turn while the notes sound, like Triads'
+   beat lights. Still, they rest on the line. */
 .ae-pulse {
-  width: 12px;
-  height: 12px;
-  background: var(--color-accent);
+  display: flex;
+  gap: 6px;
   flex: none;
 }
 
-.ae-pulse-on {
-  animation: et-blink 0.7s ease-in-out infinite;
+.ae-pulse span {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+}
+
+.ae-pulse span:nth-child(1) { background: var(--do); }
+.ae-pulse span:nth-child(2) { background: var(--mi); box-shadow: inset 0 0 0 1.5px #c48a12; }
+.ae-pulse span:nth-child(3) { background: var(--so); }
+
+.ae-pulse-on span {
+  animation: ae-lift 0.9s var(--ease-out) infinite;
+}
+
+.ae-pulse-on span:nth-child(2) { animation-delay: 0.15s; }
+.ae-pulse-on span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes ae-lift {
+  0%, 60%, 100% { transform: none; }
+  25% { transform: translateY(-7px); }
 }
 
 .ae-controls {
@@ -359,79 +432,69 @@ a:hover {
 }
 
 .ae-replay {
+  min-height: 48px;
   cursor: pointer;
-  border: 2px solid var(--color-text);
-  background: transparent;
-  color: var(--color-text);
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 14px var(--space-4);
-  text-align: left;
-}
-
-.ae-replay:hover {
-  border-color: var(--color-accent);
-  background: var(--color-accent-100);
-}
-
-.ae-replay:active {
-  border-color: var(--color-accent-600);
-  background: var(--color-accent-200);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 0 20px;
+  font-variant-numeric: tabular-nums;
 }
 
 .ae-cancel {
+  min-height: 48px;
   cursor: pointer;
-  border: 2px solid var(--color-divider);
-  background: transparent;
-  color: var(--color-neutral-700);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 14px var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0 20px;
 }
 
 .ae-cancel:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  background: var(--sand-strong);
 }
 
 .ae-answer {
   cursor: pointer;
-  min-height: 60px;
-  padding: 10px 8px;
+  min-height: 64px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  border: 2px solid var(--color-divider);
-  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
   color: var(--color-text);
   text-align: left;
 }
 
 .ae-answer:hover {
-  border-color: var(--color-accent);
-  background: var(--color-accent-100);
+  background: var(--sand-strong);
 }
 
 .ae-answer:active {
-  border-color: var(--color-accent-600);
-  background: var(--color-accent-200);
+  background: var(--color-text);
+  color: var(--color-bg);
 }
 
 .ae-answer-short {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 17px;
+  font-size: 20px;
+  line-height: 1.1;
 }
 
 .ae-answer-long {
-  font-size: 10px;
-  letter-spacing: 0.03em;
-  color: var(--color-neutral-600);
+  font-size: 12px;
+  opacity: 0.75;
   margin-top: 2px;
 }
 
@@ -452,30 +515,35 @@ a:hover {
   display: flex;
   align-items: flex-end;
   gap: var(--space-4);
-  border-top: 2px solid var(--color-text);
-  border-bottom: 2px solid var(--color-text);
-  padding: var(--space-4) 0;
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
 }
 
 .ae-score-pct {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 64px;
-  line-height: 0.88;
+  font-size: clamp(64px, 16vw, 88px);
+  line-height: 0.85;
   letter-spacing: -0.04em;
-  color: var(--color-accent);
+  font-variation-settings: 'opsz' 96;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
 }
 
 .ae-score-count {
-  font-size: 13px;
-  color: var(--color-neutral-700);
-  padding-bottom: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  padding-bottom: 6px;
 }
 
 .ae-weakest {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 20px;
+  font-size: 22px;
+  letter-spacing: -0.01em;
   text-wrap: pretty;
 }
 
@@ -483,9 +551,10 @@ a:hover {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
-  font-size: 13px;
-  border-bottom: 1px solid var(--color-divider);
-  padding-bottom: 5px;
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
 }
 
 .ae-confusion-actual {
@@ -496,13 +565,14 @@ a:hover {
 .ae-confusion-said {
   font-family: var(--font-heading);
   font-weight: 800;
-  color: var(--color-accent-700);
+  color: var(--color-accent);
 }
 
 .ae-confusion-n {
   margin-left: auto;
-  color: var(--color-neutral-600);
-  font-size: 11px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .ae-item {
@@ -512,6 +582,7 @@ a:hover {
 
 .ae-right {
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 /* — stats chart — */
@@ -521,50 +592,64 @@ a:hover {
   align-items: flex-end;
   gap: 3px;
   height: 132px;
+  padding: 14px 14px 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: var(--card);
   border-bottom: 2px solid var(--color-text);
 }
 
 .ae-chart-bar {
   flex: 1;
   min-width: 6px;
+  border-radius: 4px 4px 0 0;
 }
 
 .ae-axis {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-neutral-600);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
   margin-top: 6px;
 }
 
 .ae-summary-pct {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 22px;
-  color: var(--color-accent);
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
 }
 
 .ae-reset {
   cursor: pointer;
-  border: 2px solid var(--color-divider);
-  background: transparent;
-  color: var(--color-neutral-700);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  min-height: 44px;
-  padding: 11px var(--space-4);
-  text-align: left;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 40px;
+  padding: 0 16px;
 }
 
 .ae-reset:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  background: var(--sand-strong);
 }
 
-.ae-reset-confirm {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+/* The one warning wash, as in Triads: do at 12% into paper, do-tinted text. */
+.ae-reset-confirm,
+.ae-reset-confirm:hover {
+  background: color-mix(in srgb, var(--do) 12%, var(--color-bg));
+  color: var(--color-accent-700);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { confusions, correctCount, pct, runRows, weakestLabel } from '$domain/stats'
+  import { barColor, confusions, correctCount, pct, runRows, weakestLabel } from '$domain/stats'
   import { app, go, label, openStats, startDrill } from '../app.svelte'
   import AccuracyBar from '../ui/AccuracyBar.svelte'
   import GhostButton from '../ui/GhostButton.svelte'
@@ -44,7 +44,7 @@
           <td class="ae-item">{r.label}</td>
           <td class="ae-right">{r.asked}</td>
           <td class="ae-right">{r.correct}</td>
-          <td><AccuracyBar pct={r.pct} /></td>
+          <td><AccuracyBar pct={r.pct} color={barColor(r.rate)} /></td>
         </tr>
       {/each}
     </tbody>
@@ -58,7 +58,7 @@
         {#each misses as c (c.actual + c.said)}
           <div class="ae-confusion">
             <span class="ae-confusion-actual">{c.actual}</span>
-            <span style="color:var(--color-neutral-600)">heard as</span>
+            <span style="color:var(--ink-soft)">heard as</span>
             <span class="ae-confusion-said">{c.said}</span>
             <span class="ae-confusion-n">×{c.n}</span>
           </div>
@@ -73,7 +73,7 @@
     <button type="button" class="ae-action ae-action-secondary" onclick={() => go('config')}>
       Change setup
     </button>
-    <GhostButton onclick={openStats} style="font-size:12px;letter-spacing:0.1em">
+    <GhostButton onclick={openStats}>
       History and all-time stats →
     </GhostButton>
   </div>

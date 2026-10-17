@@ -1,8 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte'
-  import '@fontsource/archivo/400.css'
-  import '@fontsource/archivo/600.css'
-  import '@fontsource/archivo/800.css'
+  import '@fontsource-variable/bricolage-grotesque'
   import '../styles/tokens.css'
   import '../styles/app.css'
 

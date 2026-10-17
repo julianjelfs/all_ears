@@ -42,12 +42,12 @@
 <div>
   <div class="ae-row">
     <div
-      style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:0.1em"
+      style="font-family:var(--font-heading);font-weight:800;font-size:15px;font-variant-numeric:tabular-nums"
     >
       {app.qIndex} / {app.total}
     </div>
     {#if SETTINGS.showRunningScore}
-      <div class="ae-label" style="letter-spacing:0.1em">
+      <div class="ae-label">
         {correct} of {app.log.length} right
       </div>
     {/if}
@@ -57,7 +57,9 @@
   <div class="ae-prompt">
     <div class="ae-label">{promptKicker(app.cfg)}</div>
     <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
-      <div class="ae-pulse" class:ae-pulse-on={app.playing}></div>
+      <div class="ae-pulse" class:ae-pulse-on={app.playing} aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
       <div class="ae-prompt-title">{app.playing ? 'Listening' : 'Name it'}</div>
     </div>
   </div>

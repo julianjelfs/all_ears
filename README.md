@@ -19,7 +19,7 @@ npm run test       # vitest, pure logic only
 npm run build      # static build into build/
 npm run preview    # serve the build at /all_ears/
 npm run typecheck  # svelte-check
-npm run icons      # regenerate the PNG icons from the SVG mark
+npm run icons      # redraw the icons (PNGs and icon.svg) from the mark
 ```
 
 SvelteKit with Svelte 5 runes, prerendered to a static site by `adapter-static`. Node 22. The dev
@@ -76,10 +76,15 @@ sound fetches its 25 samples and switching back afterwards is instant.
 
 ### Design
 
-The visual spec is the Modernist design system in `src/styles/tokens.css`, copied verbatim from the
-handoff. Zero border radius, everything flush left, 2px rules, accent used only for the primary
-action, selected options, the progress fill, the big score and "needs work" bars. Archivo is
-self-hosted through `@fontsource` so the app looks right offline.
+All Ears shares Triad Trainer's look (see `DESIGN.md` in the triads repo): warm paper, brown-black
+ink, sand pills that turn ink when chosen, and cream cards for anything raised. The values live in
+`src/styles/tokens.css` under the old token names. Vermilion is the one accent and means "needs
+work": bars below 70%, and what a missed note was heard as. While the notes sound, three dots in
+Triads' do, mi and so colours lift in turn. Bricolage Grotesque is self-hosted through
+`@fontsource-variable` so the app looks right offline.
+
+The icon is two notes and the leap between them, vermilion low and cobalt high, joined by an
+ink slur. `npm run icons` draws it.
 
 ### Keyboard
 

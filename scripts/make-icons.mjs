@@ -1,22 +1,39 @@
-// Rasterises the flat-rect app mark into the PNGs a PWA install prompt needs.
-// The mark is a handful of rectangles, so it needs no SVG renderer — and no dependency.
+// Rasterises the All Ears mark into the PNGs a PWA install prompt needs, and writes the
+// SVG icon. Two notes and the leap between them: vermilion low, cobalt high, joined by
+// an ink slur, on Triad Trainer's paper. Same shapes as the mark in Header.svelte
+// (24-unit grid). Drawn with signed distances, so it needs no SVG renderer and no
+// dependency.
 import { deflateSync } from 'node:zlib'
 import { writeFileSync } from 'node:fs'
 import { Buffer } from 'node:buffer'
 
-const BG = [0xf3, 0xf2, 0xf2]
-const INK = [0x20, 0x1e, 0x1d]
-const ACCENT = [0xec, 0x30, 0x13]
+const PAPER = [0xf5, 0xec, 0xda]
+const INK = [0x2b, 0x25, 0x20]
+const DO = [0xc9, 0x3c, 0x25]
+const SO = [0x2a, 0x6a, 0xa8]
 
-/** Bars as laid out on the 512-unit design grid. */
-const BARS = [
-  { x: 64, y: 64, w: 384, h: 24, c: INK },
-  { x: 64, y: 424, w: 384, h: 24, c: INK },
-  { x: 96, y: 160, w: 60, h: 192, c: INK },
-  { x: 188, y: 208, w: 60, h: 144, c: INK },
-  { x: 280, y: 128, w: 60, h: 224, c: ACCENT },
-  { x: 372, y: 240, w: 60, h: 112, c: INK },
-]
+const LOW = [6.5, 16.5]
+const HIGH = [17.5, 7.5]
+const NOTE_R = 4.4
+// The slur is the upper-left quarter of a circle round (17.5, 16.5), 1.8 wide.
+const ARC_C = [17.5, 16.5]
+const ARC_R = 11
+const ARC_HALF = 0.9
+// Centre and span of the mark, for scaling it into the icon.
+const CX = 12
+const CY = 11
+const SPAN = 20
+
+function slurDistance(x, y) {
+  const dx = x - ARC_C[0]
+  const dy = y - ARC_C[1]
+  if (dx <= 0 && dy <= 0) return Math.abs(Math.hypot(dx, dy) - ARC_R) - ARC_HALF
+  const ends = [
+    [ARC_C[0] - ARC_R, ARC_C[1]],
+    [ARC_C[0], ARC_C[1] - ARC_R],
+  ]
+  return Math.min(...ends.map(([ex, ey]) => Math.hypot(x - ex, y - ey))) - ARC_HALF
+}
 
 function crc32(buf) {
   let c = ~0
@@ -36,35 +53,30 @@ function chunk(type, data) {
   return Buffer.concat([head, data, crc])
 }
 
-function png(size, scale) {
-  const pad = (1 - scale) / 2
+/** `fraction` is how much of the icon the mark spans. */
+function png(size, fraction) {
+  const scale = (size * fraction) / SPAN
   const row = size * 3 + 1
   const raw = Buffer.alloc(row * size)
 
-  for (let y = 0; y < size; y++) {
-    const base = y * row
-    for (let x = 0; x < size; x++) {
-      const at = base + 1 + x * 3
-      raw[at] = BG[0]
-      raw[at + 1] = BG[1]
-      raw[at + 2] = BG[2]
-    }
-  }
-
-  const place = (v) => Math.round((pad + (v / 512) * scale) * size)
-  for (const b of BARS) {
-    const x0 = place(b.x)
-    const x1 = place(b.x + b.w)
-    const y0 = place(b.y)
-    const y1 = place(b.y + b.h)
-    for (let y = y0; y < y1; y++) {
-      const base = y * row
-      for (let x = x0; x < x1; x++) {
-        const at = base + 1 + x * 3
-        raw[at] = b.c[0]
-        raw[at + 1] = b.c[1]
-        raw[at + 2] = b.c[2]
+  for (let py = 0; py < size; py++) {
+    for (let px = 0; px < size; px++) {
+      const x = (px + 0.5 - size / 2) / scale + CX
+      const y = (py + 0.5 - size / 2) / scale + CY
+      let colour = PAPER
+      for (const [dist, ink] of [
+        [slurDistance(x, y), INK],
+        [Math.hypot(x - LOW[0], y - LOW[1]) - NOTE_R, DO],
+        [Math.hypot(x - HIGH[0], y - HIGH[1]) - NOTE_R, SO],
+      ]) {
+        // One pixel of anti-aliasing at the edge.
+        const cover = Math.min(1, Math.max(0, 0.5 - dist * scale))
+        if (cover) colour = colour.map((c, i) => Math.round(c + (ink[i] - c) * cover))
       }
+      const at = py * row + 1 + px * 3
+      raw[at] = colour[0]
+      raw[at + 1] = colour[1]
+      raw[at + 2] = colour[2]
     }
   }
 
@@ -81,14 +93,29 @@ function png(size, scale) {
   ])
 }
 
+// Full-bleed paper with the mark in the middle 60%, so a launcher's circular crop never
+// clips it. The maskable icon shrinks it a little further into the safe zone.
 const targets = [
-  ['static/icon-192.png', 192, 1],
-  ['static/icon-512.png', 512, 1],
-  // A maskable icon is cropped to a circle, so the mark shrinks into the safe zone.
-  ['static/icon-maskable-512.png', 512, 0.72],
+  ['static/icon-192.png', 192, 0.6],
+  ['static/icon-512.png', 512, 0.6],
+  ['static/icon-maskable-512.png', 512, 0.5],
 ]
 
-for (const [path, size, scale] of targets) {
-  writeFileSync(path, png(size, scale))
+for (const [path, size, fraction] of targets) {
+  writeFileSync(path, png(size, fraction))
   console.log('wrote', path)
 }
+
+writeFileSync(
+  'static/icon.svg',
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <rect width="24" height="24" fill="#f5ecda"/>
+  <g transform="translate(12 12) scale(0.72) translate(-${CX} -${CY})">
+    <path d="M6.5 16.5 A11 11 0 0 1 17.5 5.5" fill="none" stroke="#2b2520" stroke-width="1.8"/>
+    <circle cx="6.5" cy="16.5" r="4.4" fill="#c93c25"/>
+    <circle cx="17.5" cy="7.5" r="4.4" fill="#2a6aa8"/>
+  </g>
+</svg>
+`,
+)
+console.log('wrote static/icon.svg')
