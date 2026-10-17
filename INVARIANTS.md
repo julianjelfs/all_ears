@@ -45,4 +45,4 @@ Each line states something a test can fail on. The test that pins it is named be
 
 ## Installable
 
-22. The built `index.html` links `manifest.webmanifest` and loads `registerSW.js`, so Chrome can install the app and the service worker gets registered. — CI step "Built page links the manifest and registers the service worker" in `deploy.yml`
+22. The built `index.html` links `/manifest.webmanifest` and loads `registerSW.js`, so Chrome can install the app and the service worker gets registered. — CI step "Built page links the manifest and registers the service worker" in `deploy.yml`

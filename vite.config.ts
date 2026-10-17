@@ -2,7 +2,7 @@ import { sveltekit } from '@sveltejs/kit/vite'
 import { SvelteKitPWA } from '@vite-pwa/sveltekit'
 import { defineConfig } from 'vitest/config'
 
-const BASE = '/all_ears/'
+const BASE = '/'
 const SOUNDFONT = /^https:\/\/gleitz\.github\.io\/midi-js-soundfonts\/.*\.mp3$/
 
 export default defineConfig({

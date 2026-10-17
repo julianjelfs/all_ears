@@ -7,7 +7,7 @@ Intervals you get wrong come up more often next time.
 No backend. Everything lives in `localStorage`, and the guitar samples are cached by a service
 worker, so a drill you have run once works with no network at all.
 
-**Live: https://julianjelfs.github.io/all_ears/** — installable from the browser's "Add to home
+**Live: https://allears.julianjelfs.co.uk/** — installable from the browser's "Add to home
 screen" / install prompt.
 
 ## Running it
@@ -17,20 +17,22 @@ npm install
 npm run dev        # dev server
 npm run test       # vitest, pure logic only
 npm run build      # static build into build/
-npm run preview    # serve the build at /all_ears/
+npm run preview    # serve the build
 npm run typecheck  # svelte-check
 npm run icons      # redraw the icons (PNGs and icon.svg) from the mark
 ```
 
-SvelteKit with Svelte 5 runes, prerendered to a static site by `adapter-static`. Node 22. The dev
-server runs under the same `/all_ears/` base path as production.
+SvelteKit with Svelte 5 runes, prerendered to a static site by `adapter-static`. Node 22. It is served
+from the root of its own domain, so there is no base path.
 
 ## Deployment
 
 Pushing to `main` runs `.github/workflows/deploy.yml`: tests, build, then publish to GitHub Pages.
-The Pages source must be set to **GitHub Actions** in the repository settings. The site is served
-from a subpath, so `paths.base` in `svelte.config.js` and the manifest's `scope`/`start_url` all
-carry `/all_ears` — changing the repo name means changing that constant (or setting `BASE_PATH`).
+The Pages source must be set to **GitHub Actions** in the repository settings. The custom
+domain, `allears.julianjelfs.co.uk`, is set in the repository's Pages settings and is a CNAME to
+`julianjelfs.github.io` in Cloudflare (DNS only). Its own origin keeps All Ears' storage and
+installed app apart from Askance, which also lives on GitHub Pages. The old
+`julianjelfs.github.io/all_ears/` address redirects here.
 
 ## How it is put together
 
